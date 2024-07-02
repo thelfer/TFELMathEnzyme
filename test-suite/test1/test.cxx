@@ -11,6 +11,7 @@
 #include <iostream>
 #include <type_traits>
 
+#include "TFEL/Math/power.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/Vector/tvectorIO.hxx"
@@ -19,6 +20,7 @@
 #include "TFEL/Math/General/DerivativeType.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Enzyme/diff.hxx"
+#include "TFEL/Material/Lame.hxx"
 
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
@@ -32,6 +34,7 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     this->test1();
     this->test2();
     this->test3();
+    this->test4();
     return this->result;
   }  // end of execute
 private:
@@ -90,6 +93,25 @@ private:
     static_cast<void>(vp);
     static_cast<void>(n1);
     static_cast<void>(n2);
+  }
+  void test4() {
+    using namespace tfel::math;
+    using namespace tfel::math::enzyme;
+    using namespace tfel::material;
+    constexpr auto E = double{70e9};
+    constexpr auto nu = double{0.3};
+    constexpr auto lambda = computeLambda(E, nu);
+    constexpr auto mu = computeMu(E, nu);
+    constexpr auto eps = double{1e-14};
+    using Stensor = stensor<3u, double>;
+    const auto hooke_potential = [lambda, mu](const Stensor &e) {
+      return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
+    };
+    const auto stress = getCallableDerivative<Stensor>(hooke_potential);
+    const auto stiffness = getCallableDerivative<Stensor>(stress);
+    const auto e = Stensor{0.01, 0, 0, 0, 0, 0};
+    const auto s = stress(e);
+    const auto K = stiffness(e);
   }
 };
 
