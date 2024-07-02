@@ -85,16 +85,16 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
-  template <typename VariableType>
-  auto getCallableDerivative(const auto &);
-
-  template <std::size_t N, typename CallableType, typename VariableType>
-  TFEL_HOST_DEVICE auto diff(const CallableType &c, const VariableType& x)  //
-    requires(((ScalarConcept<VariableType>) ||
-              (MathObjectConcept<VariableType>)) &&
-             (std::is_invocable_v<CallableType, const VariableType>) &&
+  template <std::size_t N,
+            typename CallableType,
+            DiffVariableTypeConcept VariableType>
+  TFEL_HOST_DEVICE auto diff(const CallableType &c, const VariableType &x)  //
+    requires((std::is_invocable_v<CallableType, const VariableType>) &&
              (N >= 1))
   {
+    using result_type = std::invoke_result_t<CallableType, const VariableType>;
+    static_assert(!internals::isTemporary<result_type>(),
+                  "temporary types (views, expressions) are not allowed");
     if constexpr (N == 1) {
       return internals::diff(c, x);
     } else {
@@ -106,8 +106,13 @@ namespace tfel::math::enzyme {
     }
   }  // end of diff
 
-  template <typename VariableType>
-  auto getCallableDerivative(const auto &c) {
+  template <DiffVariableTypeConcept VariableType, typename CallableType>
+  TFEL_HOST_DEVICE auto getCallableDerivative(const CallableType &c)
+    requires(std::is_invocable_v<CallableType, const VariableType>)
+  {
+    using result_type = std::invoke_result_t<CallableType, const VariableType>;
+    static_assert(!internals::isTemporary<result_type>(),
+                  "temporary types (views, expressions) are not allowed");
     return [&c](const VariableType &x) { return diff<1u>(c, x); };
   }
 
