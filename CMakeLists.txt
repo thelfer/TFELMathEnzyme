@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GNUInstallDirs)
+find_package(TFELTests REQUIRED HINTS "${TFEL_DIR}/share/tfel/cmake")
 find_package(TFELMath REQUIRED HINTS "${TFEL_DIR}/share/tfel/cmake")
 
 add_subdirectory(include)

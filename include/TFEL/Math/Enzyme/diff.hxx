@@ -11,6 +11,9 @@
  * project under specific licensing conditions.
  */
 
+#ifndef LIB_TFEL_MATH_ENZYME_DIFF_HXX
+#define LIB_TFEL_MATH_ENZYME_DIFF_HXX 1
+
 #include <cstddef>
 #include <type_traits>
 #include "TFEL/Math/General/MathObjectTraits.hxx"
@@ -35,9 +38,8 @@ namespace tfel::math::enzyme {
    * callable is derivated
    * \param[in] c: callable object
    */
-  template <DiffVariableTypeConcept VariableType, typename CallableType>
-  auto getCallableDerivative(const CallableType&)
-    requires(std::is_invocable_v<CallableType, const VariableType>);
+  template <DiffVariableTypeConcept VariableType, std::invocable<VariableType> CallableType>
+  TFEL_HOST_DEVICE auto getCallableDerivative(const CallableType&);
 
   /*!
    * \brief evaluate the Nth derivative of a callable for the given value of the
@@ -49,12 +51,13 @@ namespace tfel::math::enzyme {
    * \param[in] x: variable value
    */
   template <std::size_t N = 1,
-            typename CallableType,
-            DiffVariableTypeConcept VariableType>
+            DiffVariableTypeConcept VariableType,
+            std::invocable<VariableType> CallableType>
   TFEL_HOST_DEVICE auto diff(const CallableType&, const VariableType&)  //
-    requires((std::is_invocable_v<CallableType, const VariableType>) &&
-             (N >= 1));
+    requires(N >= 1);
 
 }  // end of namespace tfel::math::enzyme
 
 #include "TFEL/Math/Enzyme/diff.ixx"
+
+#endif /* LIB_TFEL_MATH_ENZYME_DIFF_HXX */
