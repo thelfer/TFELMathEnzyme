@@ -11,6 +11,9 @@
  * project under specific licensing conditions.
  */
 
+#ifndef LIB_TFEL_MATH_ENZYME_INTERNALS_ISTEMPORARY_LIB
+#define LIB_TFEL_MATH_ENZYME_INTERNALS_ISTEMPORARY_LIB 1
+
 #include <type_traits>
 #include "TFEL/Math/Forward/qt.hxx"
 #include "TFEL/Math/Forward/Expr.hxx"
@@ -43,3 +46,5 @@ namespace tfel::math::enzyme::internals {
   }
 
 } // end of namespace tfel::math::enzyme::internals
+
+#endif /* LIB_TFEL_MATH_ENZYME_INTERNALS_ISTEMPORARY_LIB */
