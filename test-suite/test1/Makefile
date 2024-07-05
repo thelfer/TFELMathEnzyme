@@ -11,7 +11,7 @@ all: test.exe
 test.exe: test.cxx
 	echo $(LDFLAGS)
 	clang++-17 $(CPPFLAGS) test.cxx -S -emit-llvm -o input.ll $(CXXFLAGS1)
-	opt-17 input.ll $(OPTFLAGS) -p enzyme -o output.ll -S
+	opt-17 input.ll $(CXXFLAGS1) -p enzyme -o output.ll -S
 	opt-17 output.ll $(CXXFLAGS2) -o output_opt.ll -S
 	clang++-17 output_opt.ll -o test.exe $(LDFLAGS)
 
