@@ -15,20 +15,9 @@
 #define LIB_TFEL_MATH_ENZYME_DIFF_HXX 1
 
 #include <cstddef>
-#include <type_traits>
-#include "TFEL/Math/General/MathObjectTraits.hxx"
-#include "TFEL/Math/Enzyme/Internals/IsTemporary.hxx"
+#include "TFEL/Math/Enzyme/Variable.hxx"
 
 namespace tfel::math::enzyme {
-
-  /*!
-   * \brief a concept used to imposed constraints on the variable with respect
-   * to which a callable object can be differentiated.
-   */
-  template <typename VariableType>
-  concept DiffVariableTypeConcept =
-      (!internals::isTemporary<VariableType>()) &&
-      ((ScalarConcept<VariableType>) || (MathObjectConcept<VariableType>));
 
   /*!
    * \returns a callable object computing the derivative of the callable object
@@ -38,7 +27,7 @@ namespace tfel::math::enzyme {
    * callable is derivated
    * \param[in] c: callable object
    */
-  template <DiffVariableTypeConcept VariableType, std::invocable<VariableType> CallableType>
+  template <VariableConcept VariableType, std::invocable<VariableType> CallableType>
   TFEL_HOST_DEVICE auto getCallableDerivative(const CallableType&);
 
   /*!
@@ -51,10 +40,10 @@ namespace tfel::math::enzyme {
    * \param[in] x: variable value
    */
   template <std::size_t N = 1,
-            DiffVariableTypeConcept VariableType,
+            VariableConcept VariableType,
             std::invocable<VariableType> CallableType>
   TFEL_HOST_DEVICE auto diff(const CallableType&, const VariableType&)  //
-    requires(N >= 1);
+      requires(N >= 1);
 
 }  // end of namespace tfel::math::enzyme
 

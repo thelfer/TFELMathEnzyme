@@ -15,13 +15,7 @@
 #define LIB_TFEL_MATH_ENZYME_DIFF_IXX 1
 
 #include "TFEL/Math/General/DerivativeType.hxx"
-
-extern int enzyme_dup;
-extern int enzyme_out;
-extern int enzyme_const;
-
-template < typename return_type, typename ... T >
-return_type __enzyme_fwddiff(void*, T ... );
+#include "TFEL/Math/Enzyme/Internals/Enzyme.hxx"
 
 namespace tfel::math::enzyme::internals {
 
@@ -97,7 +91,7 @@ namespace tfel::math::enzyme::internals {
 namespace tfel::math::enzyme {
 
   template <std::size_t N,
-            DiffVariableTypeConcept VariableType,
+            VariableConcept VariableType,
             std::invocable<VariableType> CallableType>
   TFEL_HOST_DEVICE auto diff(const CallableType &c, const VariableType &x)  //
     requires(N >= 1)
@@ -116,7 +110,7 @@ namespace tfel::math::enzyme {
     }
   }  // end of diff
 
-  template <DiffVariableTypeConcept VariableType,
+  template <VariableConcept VariableType,
             std::invocable<VariableType> CallableType>
   TFEL_HOST_DEVICE auto getCallableDerivative(const CallableType &c) {
     using returned_type = std::invoke_result_t<CallableType, const VariableType>;
