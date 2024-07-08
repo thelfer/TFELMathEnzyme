@@ -15,9 +15,7 @@
 #define LIB_TFEL_MATH_ENZYME_DIFF_IXX 1
 
 #include "TFEL/Math/General/DerivativeType.hxx"
-#include "TFEL/Math/Enzyme/GetPartialDerivative.hxx"
 #include "TFEL/Math/Enzyme/Internals/Enzyme.hxx"
-
 
 namespace tfel::math::enzyme::internals {
 
@@ -107,10 +105,19 @@ namespace tfel::math::enzyme {
       //       const auto w = [&c](const VariableType v) {
       //         return diff<1u, CallableType, VariableType>(c, v);
       //       };
-      const auto w = getDerivative<VariableType>(c);
+      const auto w = getCallableDerivative<VariableType>(c);
       return diff<N - 1, decltype(w), VariableType>(w, x);
     }
   }  // end of diff
+
+  template <VariableConcept VariableType,
+            std::invocable<VariableType> CallableType>
+  TFEL_HOST_DEVICE auto getCallableDerivative(const CallableType &c) {
+    using returned_type = std::invoke_result_t<CallableType, const VariableType>;
+    static_assert(!internals::isTemporary<returned_type>(),
+                  "temporary types (views, expressions) are not allowed");
+    return [&c](const VariableType &x) { return diff<1u>(c, x); };
+  }
 
 }  // end of namespace tfel::math::enzyme
 
