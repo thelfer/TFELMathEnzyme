@@ -29,6 +29,6 @@ extern int enzyme_const;
  * \param[in] ptr:
  */
 template <typename ResultType, typename... ArgumentsTypes>
-ResultType __enzyme_fwddiff(void*, ArgumentsTypes&&...);
+ResultType __enzyme_fwddiff(void*, ArgumentsTypes...);
 
 #endif /* LIB_TFEL_MATH_ENZYME_INTERNALS_ENZYME_HXX */
