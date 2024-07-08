@@ -2,8 +2,12 @@ set(TFEL_MATH_ENZYME_HEADERS
     TFEL/Math/Enzyme/diff.hxx
     TFEL/Math/Enzyme/diff.ixx
     TFEL/Math/Enzyme/Variable.hxx
+    TFEL/Math/Enzyme/GetPartialDerivative.hxx
+    TFEL/Math/Enzyme/GetPartialDerivative.ixx
     TFEL/Math/Enzyme/Internals/Enzyme.hxx
-    TFEL/Math/Enzyme/Internals/IsTemporary.hxx)
+    TFEL/Math/Enzyme/Internals/IsTemporary.hxx
+    TFEL/Math/Enzyme/Internals/CallEnzymeForwardDifferentiate.hxx
+    TFEL/Math/Enzyme/Internals/CallEnzymeForwardDifferentiate.ixx)
 
 foreach(file ${TFEL_MATH_ENZYME_HEADERS})
   get_filename_component(dir ${file} DIRECTORY)

@@ -20,17 +20,6 @@
 namespace tfel::math::enzyme {
 
   /*!
-   * \returns a callable object computing the derivative of the callable object
-   * in argument
-   * \tparam CallableType: type of the callable
-   * \tparam VariableType: type of the variable with respect to which the
-   * callable is derivated
-   * \param[in] c: callable object
-   */
-  template <VariableConcept VariableType, std::invocable<VariableType> CallableType>
-  TFEL_HOST_DEVICE auto getCallableDerivative(const CallableType&);
-
-  /*!
    * \brief evaluate the Nth derivative of a callable for the given value of the
    * variable
    * \tparam N: derivative order
