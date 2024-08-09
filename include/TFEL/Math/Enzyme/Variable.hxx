@@ -22,6 +22,50 @@ namespace tfel::math::enzyme {
                             ((ScalarConcept<VariableType>) ||
                              (MathObjectConcept<VariableType>));
 
-} // end of tfel::math::enzyme
+  /*!
+   * \brief a simple structure containing the value of a variable and its
+   * increment
+   */
+  template <typename VariableType>
+  struct VariableValueAndIncrement {
+    VariableType value;
+    VariableType increment;
+  };
+
+  /*!
+   * \brief an helper function to build an object of type
+   * `VariableValueAndIncrement`
+   */
+  template <typename VariableType, typename ValueType, typename IncrementType>
+  VariableValueAndIncrement<VariableType> make_vdv(ValueType&&, IncrementType&&)
+    requires((std::is_convertible_v<ValueType, VariableType>) &&
+             (std::is_convertible_v<IncrementType, VariableType>));
+
+}  // end of namespace tfel::math::enzyme
+
+namespace tfel::math::enzyme::internals {
+
+
+  template <typename VariableType>
+  struct IsVariableValueAndIncrement : std::false_type {};
+
+  template <typename VariableType>
+  struct IsVariableValueAndIncrement<
+      ::tfel::math::enzyme::VariableValueAndIncrement<VariableType>>
+      : std::true_type {};
+
+  template <typename VariableType>
+  constexpr bool isVariableValueAndIncrement() noexcept {
+    return IsVariableValueAndIncrement<std::decay_t<VariableType>>::value;
+  }
+
+  template <typename... Types>
+  constexpr auto countNumberOfVariableValueAndIncrement() noexcept {
+    return ((isVariableValueAndIncrement<Types>() ? 1 : 0) + ...);
+  }  // end of countNumberOfVariableValueAndIncrement
+
+} // end of namespace tfel::math::enzyme::internals 
+
+#include "TFEL/Math/Enzyme/Variable.ixx"
 
 #endif /* LIB_TFEL_MATH_ENZYME_VARIABLE_HXX */
