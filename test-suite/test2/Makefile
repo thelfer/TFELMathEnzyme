@@ -15,4 +15,4 @@ test.exe: test.cxx
 	clang output_opt.ll -o test.exe $(LDFLAGS)
 
 clean:
-	$(RM) input.ll output.ll output_opt.ll tfel-math-enzyme.xml test.exe
+	$(RM) input.ll output.ll output_opt.ll tfel-math-enzyme-2.xml test.exe

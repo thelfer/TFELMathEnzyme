@@ -146,9 +146,9 @@ namespace tfel::math::enzyme::internals {
   template <typename CallableType,
             typename CallableArgumentType,
             typename ArgumentType>
-  auto diff_impl(const TypeList<CallableArgumentType>&,
-                 const CallableType& c,
-                 ArgumentType&& arg)
+  auto diffImplementation(const TypeList<CallableArgumentType>&,
+                          const CallableType& c,
+                          ArgumentType&& arg)
     requires(isVariableValueAndIncrement<std::decay_t<ArgumentType>>())
   {
     auto wrapper = [](const CallableType* const ptr,
@@ -160,17 +160,18 @@ namespace tfel::math::enzyme::internals {
         wrapper_ptr, enzyme_const, c_ptr, enzyme_dup,
         convertToEnzymeArgument<CallableArgumentType>(arg.value),
         convertToEnzymeArgument<CallableArgumentType>(arg.increment));
-  }  // end of diff_impl
+  }  // end of diffImplementation
 
   template <typename CallableType,
             typename CallableArgumentType0,
             typename CallableArgumentType1,
             typename ArgumentType0,
             typename ArgumentType1>
-  auto diff_impl(const TypeList<CallableArgumentType0, CallableArgumentType1>&,
-                 const CallableType& c,
-                 ArgumentType0&& arg0,
-                 ArgumentType1&& arg1) {
+  auto diffImplementation(
+      const TypeList<CallableArgumentType0, CallableArgumentType1>&,
+      const CallableType& c,
+      ArgumentType0&& arg0,
+      ArgumentType1&& arg1) {
     static_assert(isConvertible<ArgumentType0, CallableArgumentType0>(),
                   "first argument is not compatible with the first argument of "
                   "the callable");
@@ -211,13 +212,13 @@ namespace tfel::math::enzyme::internals {
             typename ArgumentType0,
             typename ArgumentType1,
             typename ArgumentType2>
-  auto diff_impl(const TypeList<CallableArgumentType0,
-                                CallableArgumentType1,
-                                CallableArgumentType2>&,
-                 const CallableType& c,
-                 ArgumentType0&& arg0,
-                 ArgumentType1&& arg1,
-                 ArgumentType2&& arg2) {
+  auto diffImplementation(const TypeList<CallableArgumentType0,
+                                         CallableArgumentType1,
+                                         CallableArgumentType2>&,
+                          const CallableType& c,
+                          ArgumentType0&& arg0,
+                          ArgumentType1&& arg1,
+                          ArgumentType2&& arg2) {
     checkCallEnzymeArguments(
         TypeList<CallableArgumentType0, CallableArgumentType1,
                  CallableArgumentType2>{},
@@ -268,15 +269,15 @@ namespace tfel::math::enzyme::internals {
             typename ArgumentType1,
             typename ArgumentType2,
             typename ArgumentType3>
-  auto diff_impl(const TypeList<CallableArgumentType0,
-                                CallableArgumentType1,
-                                CallableArgumentType2,
-                                CallableArgumentType3>&,
-                 const CallableType& c,
-                 ArgumentType0&& arg0,
-                 ArgumentType1&& arg1,
-                 ArgumentType2&& arg2,
-                 ArgumentType3&& arg3) {
+  auto diffImplementation(const TypeList<CallableArgumentType0,
+                                         CallableArgumentType1,
+                                         CallableArgumentType2,
+                                         CallableArgumentType3>&,
+                          const CallableType& c,
+                          ArgumentType0&& arg0,
+                          ArgumentType1&& arg1,
+                          ArgumentType2&& arg2,
+                          ArgumentType3&& arg3) {
     checkCallEnzymeArguments(
         TypeList<CallableArgumentType0, CallableArgumentType1,
                  CallableArgumentType2, CallableArgumentType3>{},
@@ -335,13 +336,15 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
-  template <internals::EnzymeCallableConcept CallableType, typename ArgumentType0>
+  template <internals::EnzymeCallableConcept CallableType,
+            typename ArgumentType0>
   auto diff(const CallableType& c, ArgumentType0&& arg0)
     requires((internals::isVariableValueAndIncrement<ArgumentType0>()) &&
              (internals::getArgumentsSize<CallableType>() == 1u))
   {
-    return internals::diff_impl(internals::getArgumentsList<CallableType>(), c,
-                                std::forward<ArgumentType0>(arg0));
+    return internals::diffImplementation(
+        internals::getArgumentsList<CallableType>(), c,
+        std::forward<ArgumentType0>(arg0));
   }  // end of diff
 
   template <internals::EnzymeCallableConcept CallableType,
@@ -350,22 +353,25 @@ namespace tfel::math::enzyme {
   auto diff(const CallableType& c, ArgumentType0&& arg0, ArgumentType1&& arg1)
     requires((internals::getArgumentsSize<CallableType>() == 2u))
   {
-    return internals::diff_impl(internals::getArgumentsList<CallableType>(), c,
-                                std::forward<ArgumentType0>(arg0),
-                                std::forward<ArgumentType1>(arg1));
+    return internals::diffImplementation(
+        internals::getArgumentsList<CallableType>(), c,
+        std::forward<ArgumentType0>(arg0), std::forward<ArgumentType1>(arg1));
   }  // end of diff
 
   template <internals::EnzymeCallableConcept CallableType,
             typename ArgumentType0,
             typename ArgumentType1,
             typename ArgumentType2>
-  auto diff(const CallableType& c, ArgumentType0&& arg0, ArgumentType1&& arg1, ArgumentType2&& arg2)
+  auto diff(const CallableType& c,
+            ArgumentType0&& arg0,
+            ArgumentType1&& arg1,
+            ArgumentType2&& arg2)
     requires((internals::getArgumentsSize<CallableType>() == 3u))
   {
-    return internals::diff_impl(internals::getArgumentsList<CallableType>(), c,
-                                std::forward<ArgumentType0>(arg0),
-                                std::forward<ArgumentType1>(arg1),
-                                std::forward<ArgumentType2>(arg2));
+    return internals::diffImplementation(
+        internals::getArgumentsList<CallableType>(), c,
+        std::forward<ArgumentType0>(arg0), std::forward<ArgumentType1>(arg1),
+        std::forward<ArgumentType2>(arg2));
   }  // end of diff
 
   template <internals::EnzymeCallableConcept CallableType,
@@ -380,21 +386,21 @@ namespace tfel::math::enzyme {
             ArgumentType3&& arg3)
     requires((internals::getArgumentsSize<CallableType>() == 4u))
   {
-    return internals::diff_impl(
+    return internals::diffImplementation(
         internals::getArgumentsList<CallableType>(), c,
         std::forward<ArgumentType0>(arg0), std::forward<ArgumentType1>(arg1),
         std::forward<ArgumentType2>(arg2), std::forward<ArgumentType3>(arg3));
   }  // end of diff
 
-}  // // end of namespace tfel::math::enzyme
+}  // namespace tfel::math::enzyme
 
 namespace tfel::math::enzyme::internals {
 
   template <internals::IsFunctionPointerConcept auto F,
             typename... CallableArgumentsTypes,
             typename... ArgumentsTypes>
-  auto diff_impl(const TypeList<CallableArgumentsTypes...>&,
-                 ArgumentsTypes&&... args)
+  auto diffImplementation(const TypeList<CallableArgumentsTypes...>&,
+                          ArgumentsTypes&&... args)
     requires((sizeof...(CallableArgumentsTypes) == sizeof...(ArgumentsTypes)) &&
              (std::is_invocable_v<decltype(F), CallableArgumentsTypes...>))
   {
@@ -406,10 +412,12 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
-  template <internals::IsFunctionPointerConcept auto F, typename... ArgumentsTypes>
+  template <internals::IsFunctionPointerConcept auto F,
+            typename... ArgumentsTypes>
   auto diff(internals::FunctionWrapper<F>, ArgumentsTypes&&... args) {
-    return internals::diff_impl<F>(internals::getArgumentsList<decltype(F)>(),
-                                   std::forward<ArgumentsTypes>(args)...);
+    return internals::diffImplementation<F>(
+        internals::getArgumentsList<decltype(F)>(),
+        std::forward<ArgumentsTypes>(args)...);
   }
 
 }  // end of namespace tfel::math::enzyme

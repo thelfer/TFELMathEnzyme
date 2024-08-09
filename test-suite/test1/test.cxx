@@ -1,11 +1,10 @@
 /*!
- * \file   test.cxx
+ * \file   test-suite/test1/test.cxx
  * \brief
- * \author th202608
+ * \author Thomas Helfer
  * \date   28/06/2024
  */
 
-#include <tuple>
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
@@ -18,14 +17,10 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
-#include "TFEL/Tests/TestCase.hxx"
-#include "TFEL/Tests/TestProxy.hxx"
-#include "TFEL/Tests/TestManager.hxx"
-
- static double f(const double x) { return tfel::math::power<3>(x); }
- static double f2(const double x, const double y) {
-   return x + tfel::math::power<2>(y);
- }
+static double f(const double x) { return tfel::math::power<3>(x); }
+static double f2(const double x, const double y) {
+  return x + tfel::math::power<2>(y);
+}
 
 struct TFELMathEnzyme final : public tfel::tests::TestCase {
   TFELMathEnzyme()
@@ -39,47 +34,46 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     //     this->test5();
     return this->result;
   }  // end of execute
-private:
-
- void test1() {
-   using namespace tfel::math::enzyme;
-   constexpr auto eps = double{1e-14};
-   //
-   TFEL_TESTS_STATIC_ASSERT(internals::IsFunctionConcept<decltype(f)>);
-   // functions of one variable
-   TFEL_TESTS_ASSERT(std::abs(diff([](const double x) { return f(x); },
-                                   VariableValueAndIncrement<double>{2, 1}) -
-                              12) < eps);
-   TFEL_TESTS_ASSERT(std::abs(diff([](const double x) { return f(x); },
-                                   make_vdv<double>(2, 1)) -
-                              12) < eps);
-   TFEL_TESTS_ASSERT(std::abs(diff(function<f>, make_vdv<double>(2, 1)) - 12) <
-                     eps);
-   // functions of two variables
-   TFEL_TESTS_ASSERT(
-       std::abs(diff([](const double x, const double y) { return f2(x, y); }, 0,
-                     VariableValueAndIncrement<double>{3, 1}) -
-                6) < eps);
-   TFEL_TESTS_ASSERT(
-       std::abs(diff(function<f2>, 0, make_vdv<double>(3, 1)) - 6) < eps);
- }
- void test2() {
-   using namespace tfel::math::enzyme;
-   constexpr auto a = double{2.3};
-   constexpr auto eps = double{1e-14};
-   auto v = VariableValueAndIncrement<double>{1, 1};
-   static_assert(internals::isVariableValueAndIncrement<decltype(v)>());
-   const auto c = [](const double x) { return std::cos(x); };
-   const auto dc_dx = diff(c, v);
-   TFEL_TESTS_ASSERT(std::abs(dc_dx + std::sin(v.value)) < eps);
-   const auto c2 = [a](const double x) { return a * std::sin(x); };
-   const auto dc2_dx = diff(c2, v);
-   TFEL_TESTS_ASSERT(std::abs(dc2_dx - a * std::cos(v.value)) < eps);
-   const auto c3 = [&c](const double x) {
-     return diff(c, VariableValueAndIncrement<double>{x, 1});
-   };
-   const auto dc3_dx = diff(c3, v);
-   TFEL_TESTS_ASSERT(std::abs(dc3_dx + std::cos(v.value)) < eps);
+ private:
+  void test1() {
+    using namespace tfel::math::enzyme;
+    constexpr auto eps = double{1e-14};
+    //
+    TFEL_TESTS_STATIC_ASSERT(internals::IsFunctionConcept<decltype(f)>);
+    // functions of one variable
+    TFEL_TESTS_ASSERT(std::abs(diff([](const double x) { return f(x); },
+                                    VariableValueAndIncrement<double>{2, 1}) -
+                               12) < eps);
+    TFEL_TESTS_ASSERT(std::abs(diff([](const double x) { return f(x); },
+                                    make_vdv<double>(2, 1)) -
+                               12) < eps);
+    TFEL_TESTS_ASSERT(std::abs(diff(function<f>, make_vdv<double>(2, 1)) - 12) <
+                      eps);
+    // functions of two variables
+    TFEL_TESTS_ASSERT(
+        std::abs(diff([](const double x, const double y) { return f2(x, y); },
+                      0, VariableValueAndIncrement<double>{3, 1}) -
+                 6) < eps);
+    TFEL_TESTS_ASSERT(
+        std::abs(diff(function<f2>, 0, make_vdv<double>(3, 1)) - 6) < eps);
+  }
+  void test2() {
+    using namespace tfel::math::enzyme;
+    constexpr auto a = double{2.3};
+    constexpr auto eps = double{1e-14};
+    auto v = VariableValueAndIncrement<double>{1, 1};
+    static_assert(internals::isVariableValueAndIncrement<decltype(v)>());
+    const auto c = [](const double x) { return std::cos(x); };
+    const auto dc_dx = diff(c, v);
+    TFEL_TESTS_ASSERT(std::abs(dc_dx + std::sin(v.value)) < eps);
+    const auto c2 = [a](const double x) { return a * std::sin(x); };
+    const auto dc2_dx = diff(c2, v);
+    TFEL_TESTS_ASSERT(std::abs(dc2_dx - a * std::cos(v.value)) < eps);
+    const auto c3 = [&c](const double x) {
+      return diff(c, VariableValueAndIncrement<double>{x, 1});
+    };
+    const auto dc3_dx = diff(c3, v);
+    TFEL_TESTS_ASSERT(std::abs(dc3_dx + std::cos(v.value)) < eps);
   }
   void test3() {
     //     using namespace tfel::math;
