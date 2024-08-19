@@ -14,6 +14,7 @@
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
 #include "TFEL/Math/Enzyme/fwddiff.hxx"
 #include "TFEL/Math/Enzyme/autodiff.hxx"
 
@@ -40,6 +41,11 @@ static double mult_by_2(const tfel::math::stensor<2u, double>& s) {
   return (2 * s)(N);
 }
 
+static tfel::math::stensor<2u, double> deviator(
+    const tfel::math::stensor<2u, double>& s) {
+  return ::tfel::math::deviator(s);
+} // end of deviator
+
 struct TFELMathEnzyme final : public tfel::tests::TestCase {
   TFELMathEnzyme()
       : tfel::tests::TestCase("TFEL/Math/Enzyme", "TFELMathEnzyme") {
@@ -50,6 +56,7 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
     return this->result;
   }  // end of execute
  private:
@@ -135,6 +142,15 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(abs(r2 - id) < eps);
     TFEL_TESTS_ASSERT(abs(computeGradient(function<mult_by_2<1>>, id) -
                           stensor<2, double>{0, 2, 0, 0}) < eps);
+  }
+  void test6() {
+    using namespace tfel::math;
+    using namespace tfel::math::enzyme;
+    constexpr auto eps = double{1e-14};
+    constexpr auto id = stensor<2u, double>::Id();
+    constexpr auto K = st2tost2<2u, double>::K();
+    const auto r = computeGradient(function<::deviator>, id);
+    TFEL_TESTS_ASSERT(abs(r - K) < eps);
   }
 };
 
