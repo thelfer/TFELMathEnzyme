@@ -33,7 +33,7 @@ namespace tfel::math::enzyme::internals {
       return [c](CallableArgumentType0 v) {
         auto vdv = VariableValueAndIncrement<std::decay_t<CallableArgumentType0>>{
             .value = v, .increment = 1};
-        return diff(c, vdv);
+        return fwddiff(c, vdv);
       };
     } else if constexpr(ScalarConcept<ResultType>) {
       return [c](CallableArgumentType0 v) {
@@ -44,7 +44,7 @@ namespace tfel::math::enzyme::internals {
         for (typename std::decay_t<CallableArgumentType0>::size_type i = 0; i != v.size();
              ++i) {
           vdv.increment[i] = 1;
-          const auto dc = diff(c, vdv);
+          const auto dc = fwddiff(c, vdv);
           r(i) = dc;
           vdv.increment[i] = 0;
         }
@@ -59,7 +59,7 @@ namespace tfel::math::enzyme::internals {
         for (typename std::decay_t<CallableArgumentType0>::size_type i = 0;
              i != v.size(); ++i) {
           vdv.increment[i] = 1;
-          const auto dc = diff(c, vdv);
+          const auto dc = fwddiff(c, vdv);
           for (typename ResultType::size_type j = 0; j != v.size(); ++j) {
             r(i, j) = dc(j);
           }

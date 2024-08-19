@@ -14,7 +14,7 @@
 #ifndef LIB_TFEL_MATH_ENZYME_GETDERIVATIVE_HXX
 #define LIB_TFEL_MATH_ENZYME_GETDERIVATIVE_HXX
 
-#include "TFEL/Math/Enzyme/diff.hxx"
+#include "TFEL/Math/Enzyme/fwddiff.hxx"
 
 namespace tfel::math::enzyme {
 

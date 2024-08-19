@@ -89,4 +89,12 @@ namespace tfel::math::enzyme::internals {
 
 }  // end of namespace tfel::math::enzyme::internals
 
+namespace tfel::math::enzyme{
+
+  //! \brief an inline variable used to generate function wrappers
+  template <internals::IsFunctionPointerConcept auto F>
+  constexpr inline auto function = internals::FunctionWrapper<F>{};
+
+}  // end of namespace tfel::math::enzyme
+
 #endif /* LIB_TFEL_MATH_ENZYME_INTERNALS_FUNCTIONUTILITIES_HXX */

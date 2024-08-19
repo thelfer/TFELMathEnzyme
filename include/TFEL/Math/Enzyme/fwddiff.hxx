@@ -1,6 +1,6 @@
 /*!
- * \file   TFEL/Math/Enzyme/diff.hxx
- * \brief  This file declares the diff function
+ * \file   TFEL/Math/Enzyme/fwddiff.hxx
+ * \brief  This file declares the fwddiff function
  * \author Thomas Helfer
  * \date   02/07/2025
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_ENZYME_DIFF_HXX
-#define LIB_TFEL_MATH_ENZYME_DIFF_HXX 1
+#ifndef LIB_TFEL_MATH_ENZYME_FWDDIFF_HXX
+#define LIB_TFEL_MATH_ENZYME_FWDDIFF_HXX 1
 
 #include <cstddef>
 #include "TFEL/Math/Enzyme/Variable.hxx"
@@ -48,7 +48,7 @@ namespace tfel::math::enzyme {
    */
   template <internals::EnzymeCallableConcept CallableType,
             typename ArgumentType0>
-  auto diff(const CallableType&, ArgumentType0&&)
+  auto fwddiff(const CallableType&, ArgumentType0&&)
     requires((internals::isVariableValueAndIncrement<ArgumentType0>()) &&
              (internals::getArgumentsSize<CallableType>() == 1u));
 
@@ -67,7 +67,7 @@ namespace tfel::math::enzyme {
   template <internals::EnzymeCallableConcept CallableType,
             typename ArgumentType0,
             typename ArgumentType1>
-  auto diff(const CallableType&, ArgumentType0&&, ArgumentType1&&)
+  auto fwddiff(const CallableType&, ArgumentType0&&, ArgumentType1&&)
     requires((internals::getArgumentsSize<CallableType>() == 2u));
 
   /*!
@@ -88,7 +88,7 @@ namespace tfel::math::enzyme {
             typename ArgumentType0,
             typename ArgumentType1,
             typename ArgumentType2>
-  auto diff(const CallableType&,
+  auto fwddiff(const CallableType&,
             ArgumentType0&&,
             ArgumentType1&&,
             ArgumentType2&&)
@@ -115,16 +115,12 @@ namespace tfel::math::enzyme {
             typename ArgumentType1,
             typename ArgumentType2,
             typename ArgumentType3>
-  auto diff(const CallableType&,
+  auto fwddiff(const CallableType&,
             ArgumentType0&&,
             ArgumentType1&&,
             ArgumentType2&&,
             ArgumentType3&&)
     requires((internals::getArgumentsSize<CallableType>() == 4u));
-
-  //! \brief an inline variable used to generate function wrappers
-  template <internals::IsFunctionPointerConcept auto F>
-  constexpr inline auto function = internals::FunctionWrapper<F>{};
 
   /*!
    * \brief helper function to compute the differential of a regular function.
@@ -134,10 +130,12 @@ namespace tfel::math::enzyme {
    */
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto diff(internals::FunctionWrapper<F>, ArgumentsTypes&&...);
+  auto fwddiff(internals::FunctionWrapper<F>,
+               ArgumentsTypes&&...)  //
+      requires(sizeof...(ArgumentsTypes) > 0);
 
 }  // end of namespace tfel::math::enzyme
 
-#include "TFEL/Math/Enzyme/diff.ixx"
+#include "TFEL/Math/Enzyme/fwddiff.ixx"
 
-#endif /* LIB_TFEL_MATH_ENZYME_DIFF_HXX */
+#endif /* LIB_TFEL_MATH_ENZYME_FWDDIFF_HXX */
