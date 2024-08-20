@@ -6,4 +6,4 @@ endfunction()
 
 add_tfel_math_enzyme_test(fwddiff)
 add_tfel_math_enzyme_test(computeGradient)
-add_tfel_math_enzyme_test(getDerivative)
+add_tfel_math_enzyme_test(getForwardModeGradientFunction)

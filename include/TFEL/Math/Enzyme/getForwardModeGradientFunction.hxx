@@ -1,6 +1,6 @@
 /*!
- * \file   TFEL/Math/Enzyme/getDerivative.hxx
- * \brief  This file declares the getDerivative function
+ * \file   TFEL/Math/Enzyme/getForwardModeGradientFunction.hxx
+ * \brief  This file declares the getForwardModeGradientFunction function
  * \author Thomas Helfer
  * \date   09/08/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
@@ -18,13 +18,13 @@
 
 namespace tfel::math::enzyme {
 
-  template <std::size_t,
-            std::size_t...,
-            internals::EnzymeCallableConcept CallableType>
-  auto getDerivative(const CallableType&);
+  template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
+  auto getForwardModeGradientFunction(const CallableType&)
+    requires(sizeof...(Ns) > 0);
 
 }  // end of namespace tfel::math::enzyme
 
-#include "TFEL/Math/Enzyme/getDerivative.ixx"
+#include"TFEL/Math/Enzyme/getForwardModeGradientFunction.ixx"
 
 #endif /* LIB_TFEL_MATH_ENZYME_GETDERIVATIVE_HXX */
+
