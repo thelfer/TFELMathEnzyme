@@ -323,8 +323,8 @@ namespace tfel::math::enzyme::internals {
              (MathObjectConcept<
                  std::invoke_result_t<CallableType, ArgumentsTypes...>>))
   {
-    using VariableType =
-        std::decay_t<std::tuple_element_t<idx, std::tuple<CallableArgumentsTypes...>>>;
+    using VariableType = std::decay_t<
+        std::tuple_element_t<idx, std::tuple<CallableArgumentsTypes...>>>;
     using CallableResultType =
         std::invoke_result_t<CallableType, CallableArgumentsTypes...>;
     using ResultType = derivative_type<CallableResultType, VariableType>;
@@ -362,7 +362,7 @@ namespace tfel::math::enzyme::internals {
       }
     }
     return r;
-  } // end of computeMathObjectFunctionGradient
+  }  // end of computeMathObjectFunctionGradient
 
   template <std::size_t... idx,
             IsFunctionPointerConcept auto F,

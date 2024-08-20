@@ -1,6 +1,6 @@
 /*!
  * \file   tests/test1.cxx
- * \brief  
+ * \brief
  * \author Thomas Helfer
  * \date   20/08/2024
  */
@@ -28,7 +28,6 @@ static double f(const double x) { return tfel::math::power<3>(x); }
 static double f2(const double x, const double y) {
   return x + tfel::math::power<2>(y);
 }
-static double f3(const double x, const double y) { return x * y + 1.0 / y; }
 
 struct TFELMathEnzymeFwdDiff final : public tfel::tests::TestCase {
   TFELMathEnzymeFwdDiff()
@@ -46,19 +45,21 @@ struct TFELMathEnzymeFwdDiff final : public tfel::tests::TestCase {
     //
     TFEL_TESTS_STATIC_ASSERT(internals::IsFunctionConcept<decltype(f)>);
     // functions of one variable
+    TFEL_TESTS_ASSERT(
+        std::abs(fwddiff([](const double x) { return f(x); },
+                         VariableValueAndIncrement<double>{2, 1}) -
+                 12) < eps);
     TFEL_TESTS_ASSERT(std::abs(fwddiff([](const double x) { return f(x); },
-                                    VariableValueAndIncrement<double>{2, 1}) -
+                                       make_vdv<double>(2, 1)) -
                                12) < eps);
-    TFEL_TESTS_ASSERT(std::abs(fwddiff([](const double x) { return f(x); },
-                                    make_vdv<double>(2, 1)) -
-                               12) < eps);
-    TFEL_TESTS_ASSERT(std::abs(fwddiff(function<f>, make_vdv<double>(2, 1)) - 12) <
-                      eps);
+    TFEL_TESTS_ASSERT(
+        std::abs(fwddiff(function<f>, make_vdv<double>(2, 1)) - 12) < eps);
     // functions of two variables
     TFEL_TESTS_ASSERT(
-        std::abs(fwddiff([](const double x, const double y) { return f2(x, y); },
-                      0, VariableValueAndIncrement<double>{3, 1}) -
-                 6) < eps);
+        std::abs(
+            fwddiff([](const double x, const double y) { return f2(x, y); }, 0,
+                    VariableValueAndIncrement<double>{3, 1}) -
+            6) < eps);
     TFEL_TESTS_ASSERT(
         std::abs(fwddiff(function<f2>, 0, make_vdv<double>(3, 1)) - 6) < eps);
   }

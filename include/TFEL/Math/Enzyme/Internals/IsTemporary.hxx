@@ -25,26 +25,24 @@ namespace tfel::math::enzyme::internals {
   struct IsTemporary : std::false_type {};
 
   template <typename ResultType, typename Operation>
-  struct IsTemporary<tfel::math::Expr<ResultType, Operation>>
-      : std::true_type {};
+  struct IsTemporary<tfel::math::Expr<ResultType, Operation>> : std::true_type {
+  };
 
   template <typename MappedType, typename IndexingPolicyType>
   struct IsTemporary<tfel::math::View<MappedType, IndexingPolicyType>>
       : std::true_type {};
 
   template <typename UnitType, typename ValueType>
-  struct IsTemporary<qt_ref<UnitType, ValueType>>
-      : std::true_type {};
+  struct IsTemporary<qt_ref<UnitType, ValueType>> : std::true_type {};
 
   template <typename UnitType, typename ValueType>
-  struct IsTemporary<const_qt_ref<UnitType, ValueType>>
-      : std::true_type {};
+  struct IsTemporary<const_qt_ref<UnitType, ValueType>> : std::true_type {};
 
   template <typename T>
   constexpr bool isTemporary() noexcept {
     return IsTemporary<std::decay_t<T>>::value;
   }
 
-} // end of namespace tfel::math::enzyme::internals
+}  // end of namespace tfel::math::enzyme::internals
 
 #endif /* LIB_TFEL_MATH_ENZYME_INTERNALS_ISTEMPORARY_LIB */

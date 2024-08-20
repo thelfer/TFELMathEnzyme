@@ -19,9 +19,9 @@ namespace tfel::math::enzyme {
    * to which a callable object can be differentiated.
    */
   template <typename VariableType>
-  concept VariableConcept = (!internals::isTemporary<VariableType>()) &&
-                            ((ScalarConcept<VariableType>) ||
-                             (MathObjectConcept<VariableType>));
+  concept VariableConcept =
+      (!internals::isTemporary<VariableType>()) &&
+      ((ScalarConcept<VariableType>) || (MathObjectConcept<VariableType>));
 
   /*!
    * \brief a simple structure containing the value of a variable and its
@@ -68,7 +68,7 @@ namespace tfel::math::enzyme::internals {
   struct IsConvertible<VariableValueAndIncrement<SourceType>, DestinationType>
       : std::is_convertible<SourceType, DestinationType> {};
 
-} // end of namespace tfel::math::enzyme::internals 
+}  // end of namespace tfel::math::enzyme::internals
 
 #include "TFEL/Math/Enzyme/Variable.ixx"
 

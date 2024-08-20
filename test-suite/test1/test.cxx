@@ -38,7 +38,7 @@ static double my_trace2(const tfel::math::stensor<2u, double> s) {
   return tfel::math::trace(s);
 }
 
-template<unsigned short N>
+template <unsigned short N>
 static double mult_by_2(const tfel::math::stensor<2u, double>& s) {
   return (2 * s)(N);
 }
@@ -46,7 +46,7 @@ static double mult_by_2(const tfel::math::stensor<2u, double>& s) {
 static tfel::math::stensor<2u, double> deviator(
     const tfel::math::stensor<2u, double>& s) {
   return ::tfel::math::deviator(s);
-} // end of deviator
+}  // end of deviator
 
 struct TFELMathEnzyme final : public tfel::tests::TestCase {
   TFELMathEnzyme()
@@ -73,19 +73,21 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     //
     TFEL_TESTS_STATIC_ASSERT(internals::IsFunctionConcept<decltype(f)>);
     // functions of one variable
+    TFEL_TESTS_ASSERT(
+        std::abs(fwddiff([](const double x) { return f(x); },
+                         VariableValueAndIncrement<double>{2, 1}) -
+                 12) < eps);
     TFEL_TESTS_ASSERT(std::abs(fwddiff([](const double x) { return f(x); },
-                                    VariableValueAndIncrement<double>{2, 1}) -
+                                       make_vdv<double>(2, 1)) -
                                12) < eps);
-    TFEL_TESTS_ASSERT(std::abs(fwddiff([](const double x) { return f(x); },
-                                    make_vdv<double>(2, 1)) -
-                               12) < eps);
-    TFEL_TESTS_ASSERT(std::abs(fwddiff(function<f>, make_vdv<double>(2, 1)) - 12) <
-                      eps);
+    TFEL_TESTS_ASSERT(
+        std::abs(fwddiff(function<f>, make_vdv<double>(2, 1)) - 12) < eps);
     // functions of two variables
     TFEL_TESTS_ASSERT(
-        std::abs(fwddiff([](const double x, const double y) { return f2(x, y); },
-                      0, VariableValueAndIncrement<double>{3, 1}) -
-                 6) < eps);
+        std::abs(
+            fwddiff([](const double x, const double y) { return f2(x, y); }, 0,
+                    VariableValueAndIncrement<double>{3, 1}) -
+            6) < eps);
     TFEL_TESTS_ASSERT(
         std::abs(fwddiff(function<f2>, 0, make_vdv<double>(3, 1)) - 6) < eps);
   }
@@ -117,16 +119,16 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(computeGradient<0>(c, v) + std::sin(v)) < eps);
     const auto c2 = [a](const double x) { return a * std::sin(x); };
     const auto dc2_dx = computeGradient(c2, v);
-    const auto c3 = [&c](const double x) {
-      return computeGradient(c, x);
-    };
+    const auto c3 = [&c](const double x) { return computeGradient(c, x); };
     const auto dc3_dx = computeGradient(c3, v);
     TFEL_TESTS_ASSERT(std::abs(dc3_dx + std::cos(v)) < eps);
     TFEL_TESTS_ASSERT(std::abs(dc2_dx - a * std::cos(v)) < eps);
     TFEL_TESTS_ASSERT(std::abs(computeGradient(function<f>, 2) - 12) < eps);
     TFEL_TESTS_ASSERT(std::abs(computeGradient<0>(function<f>, 2) - 12) < eps);
-    TFEL_TESTS_ASSERT(std::abs(computeGradient<0>(function<f2>, 2, 1) - 1) < eps);
-    TFEL_TESTS_ASSERT(std::abs(computeGradient<1>(function<f2>, 2, 1) - 2) < eps);
+    TFEL_TESTS_ASSERT(std::abs(computeGradient<0>(function<f2>, 2, 1) - 1) <
+                      eps);
+    TFEL_TESTS_ASSERT(std::abs(computeGradient<1>(function<f2>, 2, 1) - 2) <
+                      eps);
     const auto [df_dx, df_dy] = computeGradient<0, 1>(function<f2>, 2, 1);
     TFEL_TESTS_ASSERT(std::abs(df_dx - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(df_dy - 2) < eps);
@@ -189,7 +191,7 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     constexpr auto eps = double{1e-14};
     using Stensor4 = st2tost2<3u, double>;
     using Stensor = stensor<3u, double>;
-    const auto hooke_potential = [lambda, mu](const Stensor &e) {
+    const auto hooke_potential = [lambda, mu](const Stensor& e) {
       return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
     };
     const auto stress = [hooke_potential](const Stensor& e) {
@@ -214,7 +216,7 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     constexpr auto eps = double{1e-14};
     using Stensor4 = st2tost2<3u, qt<NoUnit, double>>;
     using Stensor = stensor<3u, qt<NoUnit, double>>;
-    const auto hooke_potential = [lambda, mu](const Stensor &e) {
+    const auto hooke_potential = [lambda, mu](const Stensor& e) {
       return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
     };
     const auto stress = [hooke_potential](const Stensor& e) {
@@ -225,7 +227,8 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     };
     const auto e = Stensor{0.01, 0, 0, 0, 0, 0};
     const auto K = stiffness(e);
-    const st2tost2<3u, qt<Stress, double>> Kr = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+    const st2tost2<3u, qt<Stress, double>> Kr =
+        lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
     TFEL_TESTS_ASSERT(abs(K - Kr) < E * eps);
   }
 };

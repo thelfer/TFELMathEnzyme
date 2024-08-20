@@ -25,9 +25,9 @@ namespace tfel::math::enzyme {
    * and its increment.
    * \tparam CallableType: type of the callable
    * \tparam ArgumentType0: type of the argument
-   * \param[in] c: callable 
-   * \param[in] arg0: argument containing both the value of the variable and its increment
-   * \return the callable increment
+   * \param[in] c: callable
+   * \param[in] arg0: argument containing both the value of the variable and its
+   * increment \return the callable increment
    */
   template <internals::EnzymeCallableConcept CallableType,
             typename ArgumentType0>
@@ -41,7 +41,7 @@ namespace tfel::math::enzyme {
    * \tparam CallableType: type of the callable
    * \tparam ArgumentType0: type of the first argument
    * \tparam ArgumentType1: type of the second argument
-   * \param[in] c: callable 
+   * \param[in] c: callable
    * \param[in] arg0: first argument
    * \param[in] arg1: second argument
    * \return the callable increment
@@ -60,7 +60,7 @@ namespace tfel::math::enzyme {
    * \tparam ArgumentType0: type of the first argument
    * \tparam ArgumentType1: type of the second argument
    * \tparam ArgumentType2: type of the third argument
-   * \param[in] c: callable 
+   * \param[in] c: callable
    * \param[in] arg0: first argument
    * \param[in] arg1: second argument
    * \param[in] arg2: third argument
@@ -72,9 +72,9 @@ namespace tfel::math::enzyme {
             typename ArgumentType1,
             typename ArgumentType2>
   auto fwddiff(const CallableType&,
-            ArgumentType0&&,
-            ArgumentType1&&,
-            ArgumentType2&&)
+               ArgumentType0&&,
+               ArgumentType1&&,
+               ArgumentType2&&)
     requires((internals::getArgumentsSize<CallableType>() == 3u));
 
   /*!
@@ -85,7 +85,7 @@ namespace tfel::math::enzyme {
    * \tparam ArgumentType1: type of the second argument
    * \tparam ArgumentType2: type of the third argument
    * \tparam ArgumentType3: type of the fourth argument
-   * \param[in] c: callable 
+   * \param[in] c: callable
    * \param[in] arg0: first argument
    * \param[in] arg1: second argument
    * \param[in] arg2: third argument
@@ -99,10 +99,10 @@ namespace tfel::math::enzyme {
             typename ArgumentType2,
             typename ArgumentType3>
   auto fwddiff(const CallableType&,
-            ArgumentType0&&,
-            ArgumentType1&&,
-            ArgumentType2&&,
-            ArgumentType3&&)
+               ArgumentType0&&,
+               ArgumentType1&&,
+               ArgumentType2&&,
+               ArgumentType3&&)
     requires((internals::getArgumentsSize<CallableType>() == 4u));
 
   /*!
@@ -115,7 +115,7 @@ namespace tfel::math::enzyme {
             typename... ArgumentsTypes>
   auto fwddiff(internals::FunctionWrapper<F>,
                ArgumentsTypes&&...)  //
-      requires(sizeof...(ArgumentsTypes) > 0);
+    requires(sizeof...(ArgumentsTypes) > 0);
 
 }  // end of namespace tfel::math::enzyme
 

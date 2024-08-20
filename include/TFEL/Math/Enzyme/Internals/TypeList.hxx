@@ -1,6 +1,6 @@
 /*!
  * \file   TFEL/Math/Enzyme/Internals/TypeList.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09/08/2024
  */

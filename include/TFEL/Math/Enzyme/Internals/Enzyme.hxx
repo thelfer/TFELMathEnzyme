@@ -55,8 +55,9 @@ namespace tfel::math::enzyme::internals {
   }  // end of isConvertible
 
   template <typename ExpectedCallableArgumentType, typename InputType>
-  auto convertToEnzymeArgument(InputType&& in) requires(
-      std::is_convertible_v<InputType, ExpectedCallableArgumentType>) {
+  auto convertToEnzymeArgument(InputType&& in)
+    requires(std::is_convertible_v<InputType, ExpectedCallableArgumentType>)
+  {
     if constexpr (std::same_as<
                       std::remove_cvref_t<ExpectedCallableArgumentType>,
                       std::remove_cvref_t<InputType>>) {
@@ -147,9 +148,9 @@ namespace tfel::math::enzyme::internals {
       const TypeList<CurrentCallableArgumentType, CallableArgumentsTypes...>&,
       const TypeList<CurrentArgumentType,
                      ArgumentsTypes...>&)  //
-      requires((sizeof...(CallableArgumentsTypes) > 0) &&
-               (sizeof...(CallableArgumentsTypes) ==
-                sizeof...(ArgumentsTypes))) {
+    requires((sizeof...(CallableArgumentsTypes) > 0) &&
+             (sizeof...(CallableArgumentsTypes) == sizeof...(ArgumentsTypes)))
+  {
     static_assert(
         isConvertible<CurrentArgumentType, CurrentCallableArgumentType>());
     checkCallEnzymeArgumentsConsistency(TypeList<CallableArgumentsTypes...>(),

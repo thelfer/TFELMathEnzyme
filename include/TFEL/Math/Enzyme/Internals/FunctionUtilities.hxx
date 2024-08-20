@@ -1,6 +1,6 @@
 /*!
  * \file   TFEL/Math/Enzyme/Internals/FunctionUtilities.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09/08/2024
  */
@@ -73,7 +73,8 @@ namespace tfel::math::enzyme::internals {
   };
 
   template <typename CallableType>
-  struct FunctionTraits : FunctionTraits<decltype(&CallableType::operator())> {};
+  struct FunctionTraits : FunctionTraits<decltype(&CallableType::operator())> {
+  };
 
   template <typename CallableType>
   auto getArgumentsList() {
@@ -102,7 +103,7 @@ namespace tfel::math::enzyme::internals {
 
 }  // end of namespace tfel::math::enzyme::internals
 
-namespace tfel::math::enzyme{
+namespace tfel::math::enzyme {
 
   //! \brief an inline variable used to generate function wrappers
   template <internals::IsFunctionPointerConcept auto F>

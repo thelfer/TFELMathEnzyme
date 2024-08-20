@@ -28,13 +28,14 @@ namespace tfel::math::enzyme {
             typename... ArgumentsTypes>
   auto computeGradient(const CallableType&,
                        ArgumentsTypes&&...)  //
-    requires(
-        (sizeof...(ArgumentsTypes) > 0) &&
-        (sizeof...(ArgumentsTypes) < 3) &&  //
-        (sizeof...(idx) > 0) && (sizeof...(idx) <= sizeof...(ArgumentsTypes)) &&
-        ((idx < sizeof...(ArgumentsTypes)) && ...) &&
-        (std::is_invocable_v<CallableType, ArgumentsTypes...>) &&  //
-        (VariableConcept<std::invoke_result_t<CallableType, ArgumentsTypes...>>));
+    requires((sizeof...(ArgumentsTypes) > 0) &&
+             (sizeof...(ArgumentsTypes) < 3) &&  //
+             (sizeof...(idx) > 0) &&
+             (sizeof...(idx) <= sizeof...(ArgumentsTypes)) &&
+             ((idx < sizeof...(ArgumentsTypes)) && ...) &&
+             (std::is_invocable_v<CallableType, ArgumentsTypes...>) &&  //
+             (VariableConcept<
+                 std::invoke_result_t<CallableType, ArgumentsTypes...>>));
   /*!
    * \brief compute the gradient of a callable with respect to all the
    * variables. \tparam CallableType: type of the callable \tparam
@@ -44,13 +45,14 @@ namespace tfel::math::enzyme {
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeGradient(const CallableType&,
-                       ArgumentsTypes&&...)  //
-    requires(
-        (std::is_invocable_v<CallableType, ArgumentsTypes...>) &&  //
-        (VariableConcept<std::invoke_result_t<CallableType, ArgumentsTypes...>>));
+                       ArgumentsTypes&&...)                             //
+    requires((std::is_invocable_v<CallableType, ArgumentsTypes...>) &&  //
+             (VariableConcept<
+                 std::invoke_result_t<CallableType, ArgumentsTypes...>>));
   /*!
    * \brief compute the gradient of a free function with respect to the
-   * variables designated by the indices `idx`. \tparam idx: indices of the
+   * variables designated by the indices `idx`.
+   * \tparam idx: indices of the
    * variables with respect to which the gradients are computed. \tparam F:
    * pointer to the free function \tparam ArgumentsTypes: types of the arguments
    * passed to the free function \param[in] f: free function warpper \param[in]
@@ -67,7 +69,8 @@ namespace tfel::math::enzyme {
         (sizeof...(idx) > 0) && (sizeof...(idx) <= sizeof...(ArgumentsTypes)) &&
         ((idx < sizeof...(ArgumentsTypes)) && ...) &&
         (std::is_invocable_v<decltype(F), ArgumentsTypes...>) &&  //
-        (VariableConcept<std::invoke_result_t<decltype(F), ArgumentsTypes...>>));
+        (VariableConcept<std::invoke_result_t<decltype(F), ArgumentsTypes...>>))
+  ;
   /*!
    * \brief compute the gradient of a free function with respect to all
    * variables \tparam F: pointer to the free function \tparam ArgumentsTypes:
@@ -80,7 +83,8 @@ namespace tfel::math::enzyme {
                        ArgumentsTypes&&...)  //
     requires(
         (std::is_invocable_v<decltype(F), ArgumentsTypes...>) &&  //
-        (VariableConcept<std::invoke_result_t<decltype(F), ArgumentsTypes...>>));
+        (VariableConcept<std::invoke_result_t<decltype(F), ArgumentsTypes...>>))
+  ;
 
 }  // namespace tfel::math::enzyme
 

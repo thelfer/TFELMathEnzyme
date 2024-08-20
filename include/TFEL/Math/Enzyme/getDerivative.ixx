@@ -30,6 +30,7 @@ namespace tfel::math::enzyme::internals {
     using DerivativeResultType =
         derivative_type<ResultType, std::decay_t<CallableArgumentType0>>;
     if constexpr (ScalarConcept<CallableArgumentType0>) {
+      // derivative with respect to a scalar
       return [c](CallableArgumentType0 v) {
         auto vdv = VariableValueAndIncrement<std::decay_t<CallableArgumentType0>>{
             .value = v, .increment = 1};
@@ -51,6 +52,7 @@ namespace tfel::math::enzyme::internals {
         return r;
       };
     } else {
+      // derivative with respect to a MathObject
       return [c](CallableArgumentType0 v) {
         auto vdv =
             VariableValueAndIncrement<std::decay_t<CallableArgumentType0>>{
@@ -82,14 +84,25 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
-  template <std::size_t N, std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
-  auto getDerivative(const CallableType&c){
+  //   template <internals::EnzymeCallableConcept CallableType typename
+  //   ArgumentType> auto computeForwardModeDerivative(const CallableType& c,
+  //   ArgumentType&& arg)
+  //     requires(std::is_invocable_v<CallableType, ArgumentType>)
+  //   {
+  //     return internals::computeForwardModeDerivativeImplementations(
+  //         const CallableType& c, ArgumentType&& arg)
+  //   }  // end of computeForwardModeDerivative
+
+  template <std::size_t N,
+            std::size_t... Ns,
+            internals::EnzymeCallableConcept CallableType>
+  auto getDerivative(const CallableType& c) {
     if constexpr (sizeof...(Ns) == 0) {
       return internals::getDerivativeImplementation<N>(c);
     } else {
       return getDerivative<N>(getDerivative<Ns...>(c));
     }
-  } // end of getDerivative
+  }  // end of getDerivative
 
 }  // end of namespace tfel::math::enzyme
 
