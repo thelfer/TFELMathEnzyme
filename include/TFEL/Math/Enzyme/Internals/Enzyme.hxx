@@ -159,4 +159,10 @@ namespace tfel::math::enzyme::internals {
 
 }  // end of namespace tfel::math::enzyme::internals
 
+namespace tfel::math::enzyme {
+
+  enum struct Mode { FORWARD, REVERSE };
+
+}  // end of namespace tfel::math::enzyme
+
 #endif /* LIB_TFEL_MATH_ENZYME_INTERNALS_ENZYME_HXX */

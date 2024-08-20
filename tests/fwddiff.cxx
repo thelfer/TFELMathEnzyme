@@ -71,7 +71,7 @@ struct TFELMathEnzymeFwdDiff final : public tfel::tests::TestCase {
     const auto c = [](const double x) { return std::cos(x); };
     const auto dc_dx = fwddiff(c, v);
     TFEL_TESTS_ASSERT(std::abs(dc_dx + std::sin(v.value)) < eps);
-    const auto c2 = [a](const double x) { return a * std::sin(x); };
+    const auto c2 = [](const double x) { return a * std::sin(x); };
     const auto dc2_dx = fwddiff(c2, v);
     TFEL_TESTS_ASSERT(std::abs(dc2_dx - a * std::cos(v.value)) < eps);
     const auto c3 = [&c](const double x) {

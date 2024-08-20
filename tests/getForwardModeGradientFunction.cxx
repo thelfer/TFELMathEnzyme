@@ -22,8 +22,6 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
-static double f(const double x) { return tfel::math::power<3>(x); }
-
 struct TFELMathEnzymeGetDerivative final : public tfel::tests::TestCase {
   TFELMathEnzymeGetDerivative()
       : tfel::tests::TestCase("TFEL/Math/Enzyme",
@@ -99,8 +97,6 @@ struct TFELMathEnzymeGetDerivative final : public tfel::tests::TestCase {
     const auto K = stiffness(e);
     static_assert(std::is_same_v<decltype(s), const qt<Stress, float>>);
     static_assert(std::is_same_v<decltype(K), const qt<Stress, float>>);
-    //     std::cout << "s: " << s << std::endl;
-    //     std::cout << "K: " << K << std::endl;
     TFEL_TESTS_ASSERT(abs(s - E * e) < E * eps);
     TFEL_TESTS_ASSERT(abs(K - E) < E * eps);
   }
@@ -137,14 +133,14 @@ struct TFELMathEnzymeGetDerivative final : public tfel::tests::TestCase {
     constexpr auto eps = double{1e-14};
     using Stensor4 = st2tost2<3u, double>;
     using Stensor = stensor<3u, double>;
-    const auto hooke_potential = [lambda, mu](const Stensor& e) {
+    const auto hooke_potential = [](const Stensor& e) {
       return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
     };
     const auto stress = getForwardModeGradientFunction<0>(hooke_potential);
     const auto stiffness =
         getForwardModeGradientFunction<0, 0>(hooke_potential);
     const auto e = Stensor{0.01, 0, 0, 0, 0, 0};
-    const auto s = stress(e);
+    [[maybe_unused]] const auto s = stress(e);
     const auto K = stiffness(e);
     const Stensor4 Kr = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
     TFEL_TESTS_ASSERT(abs(K - Kr) < E * eps);

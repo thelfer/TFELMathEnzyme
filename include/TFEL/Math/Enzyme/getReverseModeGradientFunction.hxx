@@ -1,6 +1,6 @@
 /*!
- * \file   TFEL/Math/Enzyme/getForwardModeGradientFunction.hxx
- * \brief  This file declares the getForwardModeGradientFunction function
+ * \file   TFEL/Math/Enzyme/getReverseModeGradientFunction.hxx
+ * \brief  This file declares the getReverseModeGradientFunction function
  * \author Thomas Helfer
  * \date   09/08/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
@@ -11,19 +11,19 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_ENZYME_GETFORWARDMODEGRADIENTFUNCTION_HXX
-#define LIB_TFEL_MATH_ENZYME_GETFORWARDMODEGRADIENTFUNCTION_HXX
+#ifndef LIB_TFEL_MATH_ENZYME_GETREVERSEMODEGRADIENTFUNCTION_HXX
+#define LIB_TFEL_MATH_ENZYME_GETREVERSEMODEGRADIENTFUNCTION_HXX
 
-#include "TFEL/Math/Enzyme/computeForwardModeGradient.hxx"
+#include "TFEL/Math/Enzyme/computeReverseModeGradient.hxx"
 
 namespace tfel::math::enzyme {
 
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
-  auto getForwardModeGradientFunction(const CallableType&)
+  auto getReverseModeGradientFunction(const CallableType&)
     requires(sizeof...(Ns) > 0);
 
 }  // end of namespace tfel::math::enzyme
 
-#include "TFEL/Math/Enzyme/getForwardModeGradientFunction.ixx"
+#include "TFEL/Math/Enzyme/getReverseModeGradientFunction.ixx"
 
-#endif /* LIB_TFEL_MATH_ENZYME_GETFORWARDMODEGRADIENTFUNCTION_HXX */
+#endif /* LIB_TFEL_MATH_ENZYME_GETREVERSEMODEGRADIENTFUNCTION_HXX */

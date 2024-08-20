@@ -75,7 +75,7 @@ struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
                       eps);
     TFEL_TESTS_ASSERT(
         std::abs(computeReverseModeGradient<0>(c, v) + std::sin(v)) < eps);
-    const auto c2 = [a](const double x) { return a * std::sin(x); };
+    const auto c2 = [](const double x) { return a * std::sin(x); };
     const auto dc2_dx = computeReverseModeGradient(c2, v);
     const auto c3 = [&c](const double x) {
       return computeReverseModeGradient(c, x);
@@ -155,7 +155,7 @@ struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
     constexpr auto eps = double{1e-14};
     using Stensor4 = st2tost2<3u, double>;
     using Stensor = stensor<3u, double>;
-    const auto hooke_potential = [lambda, mu](const Stensor& e) {
+    const auto hooke_potential = [](const Stensor& e) {
       return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
     };
     const auto stress = [hooke_potential](const Stensor& e) {
