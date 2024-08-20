@@ -324,13 +324,15 @@ namespace tfel::math::enzyme::internals {
                  std::invoke_result_t<CallableType, ArgumentsTypes...>>))
   {
     using VariableType =
-        std::tuple_element_t<idx, std::tuple<CallableArgumentsTypes...>>;
+        std::decay_t<std::tuple_element_t<idx, std::tuple<CallableArgumentsTypes...>>>;
     using CallableResultType =
         std::invoke_result_t<CallableType, CallableArgumentsTypes...>;
-    using ResultType =
-        derivative_type<CallableResultType, std::decay_t<VariableType>>;
+    using ResultType = derivative_type<CallableResultType, VariableType>;
+    constexpr auto callable_result_arity =
+        CallableResultType::indexing_policy::arity;
     using size_type = typename ResultType::size_type;
     auto r = ResultType{};
+    static_assert(callable_result_arity == 1);
     for (size_type i = 0; i != r.size(0); ++i) {
       auto wrapper = [c, i](CallableArgumentsTypes... wargs) {
         auto result = c(wargs...);
@@ -338,15 +340,29 @@ namespace tfel::math::enzyme::internals {
       };
       const auto row = computeGradient<idx>(wrapper, args...);
       if constexpr (ScalarConcept<decltype(row)>) {
+        // derivation with respect to a scalar
         r[i] = row;
       } else {
-        for (size_type j = 0; j != row.size(); ++j) {
-          r(i, j) = row[j];
+        // derivation with respect to a math object
+        constexpr auto variable_result_arity =
+            VariableType::indexing_policy::arity;
+        static_assert((variable_result_arity == 1) ||
+                      (variable_result_arity == 2));
+        if constexpr (variable_result_arity == 1) {
+          for (size_type vj = 0; vj != row.size(); ++vj) {
+            r(i, vj) = row[vj];
+          }
+        } else {
+          for (size_type vj = 0; vj != row.size(0); ++vj) {
+            for (size_type vk = 0; vk != row.size(0); ++vk) {
+              r(i, vj, vk) = row(vj, vk);
+            }
+          }
         }
       }
     }
     return r;
-  }
+  } // end of computeMathObjectFunctionGradient
 
   template <std::size_t... idx,
             IsFunctionPointerConcept auto F,

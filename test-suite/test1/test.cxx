@@ -10,11 +10,13 @@
 #include <cassert>
 #include <iostream>
 #include <type_traits>
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConceptIO.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
+#include "TFEL/Material/Lame.hxx"
 #include "TFEL/Math/Enzyme/fwddiff.hxx"
 #include "TFEL/Math/Enzyme/autodiff.hxx"
 
@@ -51,12 +53,17 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math/Enzyme", "TFELMathEnzyme") {
   }  // end of TFELMathEnzyme
   tfel::tests::TestResult execute() override {
+    using namespace tfel::math;
     this->test1();
     this->test2();
     this->test3();
     this->test4();
     this->test5();
     this->test6();
+    //    this->test7<stensor_common::TFELEIGENSOLVER>();
+    this->test7<stensor_common::FSESJACOBIEIGENSOLVER>();
+    this->test8();
+    this->test9();
     return this->result;
   }  // end of execute
  private:
@@ -151,6 +158,75 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     constexpr auto K = st2tost2<2u, double>::K();
     const auto r = computeGradient(function<::deviator>, id);
     TFEL_TESTS_ASSERT(abs(r - K) < eps);
+  }
+  template <tfel::math::stensor_common::EigenSolver esolver>
+  void test7() {
+    using namespace tfel::math;
+    using namespace tfel::math::enzyme;
+    constexpr auto eps = double{1e-14};
+    using Stensor = stensor<3u, double>;
+    const auto s = Stensor{0, 1, 2, 0, 0, 0};
+    auto first_eigen_value = [](const Stensor& v) -> double {
+      const auto vp = v.computeEigenValues<esolver>();
+      return vp(0);
+    };
+    const auto dvp = computeGradient(first_eigen_value, s);
+    const auto [vp, m] = s.computeEigenVectors<esolver>();
+    const auto [n0, n1, n2] = Stensor::computeEigenTensors(m);
+    TFEL_TESTS_ASSERT(abs(dvp - n0) < eps);
+    static_cast<void>(vp);
+    static_cast<void>(n1);
+    static_cast<void>(n2);
+  }
+  void test8() {
+    using namespace tfel::math;
+    using namespace tfel::math::enzyme;
+    using namespace tfel::material;
+    constexpr auto E = double{70e9};
+    constexpr auto nu = double{0.3};
+    constexpr auto lambda = computeLambda(E, nu);
+    constexpr auto mu = computeMu(E, nu);
+    constexpr auto eps = double{1e-14};
+    using Stensor4 = st2tost2<3u, double>;
+    using Stensor = stensor<3u, double>;
+    const auto hooke_potential = [lambda, mu](const Stensor &e) {
+      return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
+    };
+    const auto stress = [hooke_potential](const Stensor& e) {
+      return computeGradient(hooke_potential, e);
+    };
+    const auto stiffness = [stress](const Stensor& e) {
+      return computeGradient(stress, e);
+    };
+    const auto e = Stensor{0.01, 0, 0, 0, 0, 0};
+    const auto K = stiffness(e);
+    const Stensor4 Kr = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+    TFEL_TESTS_ASSERT(abs(K - Kr) < E * eps);
+  }
+  void test9() {
+    using namespace tfel::math;
+    using namespace tfel::math::enzyme;
+    using namespace tfel::material;
+    constexpr auto E = qt<Stress, double>{150e9};
+    constexpr auto nu = qt<NoUnit, double>{0.3};
+    constexpr auto lambda = computeLambda(E, nu);
+    constexpr auto mu = computeMu(E, nu);
+    constexpr auto eps = double{1e-14};
+    using Stensor4 = st2tost2<3u, qt<NoUnit, double>>;
+    using Stensor = stensor<3u, qt<NoUnit, double>>;
+    const auto hooke_potential = [lambda, mu](const Stensor &e) {
+      return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
+    };
+    const auto stress = [hooke_potential](const Stensor& e) {
+      return computeGradient(hooke_potential, e);
+    };
+    const auto stiffness = [stress](const Stensor& e) {
+      return computeGradient(stress, e);
+    };
+    const auto e = Stensor{0.01, 0, 0, 0, 0, 0};
+    const auto K = stiffness(e);
+    const st2tost2<3u, qt<Stress, double>> Kr = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+    TFEL_TESTS_ASSERT(abs(K - Kr) < E * eps);
   }
 };
 
