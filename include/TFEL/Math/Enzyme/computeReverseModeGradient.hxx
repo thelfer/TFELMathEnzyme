@@ -1,12 +1,12 @@
 /*!
- * \file   TFEL/Math/Enzyme/autodiff.hxx
+ * \file   TFEL/Math/Enzyme/computeReverseModeGradient.hxx
  * \brief
  * \author Thomas Helfer
  * \date   19/08/2024
  */
 
-#ifndef LIB_TFEL_MATH_ENZYME_AUTODIFF_HXX
-#define LIB_TFEL_MATH_ENZYME_AUTODIFF_HXX
+#ifndef LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEGRADIENT_HXX
+#define LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEGRADIENT_HXX
 
 #include <cstddef>
 #include "TFEL/Math/Enzyme/Internals/Enzyme.hxx"
@@ -26,8 +26,8 @@ namespace tfel::math::enzyme {
   template <std::size_t... idx,
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeGradient(const CallableType&,
-                       ArgumentsTypes&&...)  //
+  auto computeReverseModeGradient(const CallableType&,
+                                  ArgumentsTypes&&...)  //
     requires((sizeof...(ArgumentsTypes) > 0) &&
              (sizeof...(ArgumentsTypes) < 3) &&  //
              (sizeof...(idx) > 0) &&
@@ -44,8 +44,8 @@ namespace tfel::math::enzyme {
    */
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeGradient(const CallableType&,
-                       ArgumentsTypes&&...)                             //
+  auto computeReverseModeGradient(const CallableType&,
+                                  ArgumentsTypes&&...)                  //
     requires((std::is_invocable_v<CallableType, ArgumentsTypes...>) &&  //
              (VariableConcept<
                  std::invoke_result_t<CallableType, ArgumentsTypes...>>));
@@ -61,8 +61,8 @@ namespace tfel::math::enzyme {
   template <std::size_t... idx,
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeGradient(internals::FunctionWrapper<F>,
-                       ArgumentsTypes&&...)  //
+  auto computeReverseModeGradient(internals::FunctionWrapper<F>,
+                                  ArgumentsTypes&&...)  //
     requires(
         (sizeof...(ArgumentsTypes) > 0) &&
         (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -79,8 +79,8 @@ namespace tfel::math::enzyme {
    */
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeGradient(internals::FunctionWrapper<F>,
-                       ArgumentsTypes&&...)  //
+  auto computeReverseModeGradient(internals::FunctionWrapper<F>,
+                                  ArgumentsTypes&&...)  //
     requires(
         (std::is_invocable_v<decltype(F), ArgumentsTypes...>) &&  //
         (VariableConcept<std::invoke_result_t<decltype(F), ArgumentsTypes...>>))
@@ -88,6 +88,6 @@ namespace tfel::math::enzyme {
 
 }  // namespace tfel::math::enzyme
 
-#include "TFEL/Math/Enzyme/autodiff.ixx"
+#include "TFEL/Math/Enzyme/computeReverseModeGradient.ixx"
 
-#endif /* LIB_TFEL_MATH_ENZYME_AUTODIFF_HXX */
+#endif /* LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEGRADIENT_HXX */

@@ -1,12 +1,12 @@
 /*!
- * \file   TFEL/Math/Enzyme/autodiff.ixx
+ * \file   TFEL/Math/Enzyme/computeReverseModeGradient.ixx
  * \brief
  * \author Thomas Helfer
  * \date   19/08/2024
  */
 
-#ifndef LIB_TFEL_MATH_ENZYME_AUTODIFF_IXX
-#define LIB_TFEL_MATH_ENZYME_AUTODIFF_IXX
+#ifndef LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEGRADIENT_IXX
+#define LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEGRADIENT_IXX
 
 #include <tuple>
 #include <utility>
@@ -81,8 +81,8 @@ namespace tfel::math::enzyme::internals {
   template <std::size_t... idx,
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeScalarFunctionGradient(const CallableType&,
-                                     ArgumentsTypes&&...)  //
+  auto computeReverseModeScalarFunctionGradient(const CallableType&,
+                                                ArgumentsTypes&&...)  //
     requires(
         (sizeof...(ArgumentsTypes) > 0) &&
         (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -93,8 +93,8 @@ namespace tfel::math::enzyme::internals {
 
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeScalarFunctionGradient(const CallableType&,
-                                     ArgumentsTypes&&...)  //
+  auto computeReverseModeScalarFunctionGradient(const CallableType&,
+                                                ArgumentsTypes&&...)  //
     requires(
         (std::is_invocable_v<CallableType, ArgumentsTypes...>) &&  //
         (ScalarConcept<std::invoke_result_t<CallableType, ArgumentsTypes...>>));
@@ -102,8 +102,8 @@ namespace tfel::math::enzyme::internals {
   template <std::size_t... idx,
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeScalarFunctionGradient(internals::FunctionWrapper<F>,
-                                     ArgumentsTypes&&...)  //
+  auto computeReverseModeScalarFunctionGradient(internals::FunctionWrapper<F>,
+                                                ArgumentsTypes&&...)  //
     requires(
         (sizeof...(ArgumentsTypes) > 0) &&
         (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -114,8 +114,8 @@ namespace tfel::math::enzyme::internals {
 
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeScalarFunctionGradient(internals::FunctionWrapper<F>,
-                                     ArgumentsTypes&&...)  //
+  auto computeReverseModeScalarFunctionGradient(internals::FunctionWrapper<F>,
+                                                ArgumentsTypes&&...)  //
     requires(
         (std::is_invocable_v<decltype(F), ArgumentsTypes...>) &&  //
         (ScalarConcept<std::invoke_result_t<decltype(F), ArgumentsTypes...>>));
@@ -123,7 +123,7 @@ namespace tfel::math::enzyme::internals {
   template <EnzymeCallableConcept CallableType,
             typename CallableArgumentType,
             typename ArgumentType>
-  auto computeScalarFunctionGradientImplementation(
+  auto computeReverseModeScalarFunctionGradientImplementation(
       const CallableType& c,
       const TypeList<CallableArgumentType>&,
       ArgumentType&& arg)  //
@@ -170,7 +170,7 @@ namespace tfel::math::enzyme::internals {
             typename CallableArgumentType1,
             typename ArgumentType0,
             typename ArgumentType1>
-  auto computeScalarFunctionGradientImplementation(
+  auto computeReverseModeScalarFunctionGradientImplementation(
       const CallableType& c,
       const TypeList<CallableArgumentType0, CallableArgumentType1>&,
       ArgumentType0&& arg0,
@@ -287,8 +287,8 @@ namespace tfel::math::enzyme::internals {
   template <std::size_t... idx,
             EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeScalarFunctionGradient(const CallableType& c,
-                                     ArgumentsTypes&&... args)  //
+  auto computeReverseModeScalarFunctionGradient(const CallableType& c,
+                                                ArgumentsTypes&&... args)  //
     requires(
         (sizeof...(ArgumentsTypes) > 0) &&
         (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -299,21 +299,21 @@ namespace tfel::math::enzyme::internals {
   {
     constexpr auto nargs = sizeof...(ArgumentsTypes);
     if constexpr (nargs == 1) {
-      return computeScalarFunctionGradientImplementation(
+      return computeReverseModeScalarFunctionGradientImplementation(
           c, getArgumentsList<CallableType>(),
           std::forward<ArgumentsTypes>(args)...);
     } else if constexpr (nargs == 2) {
-      return computeScalarFunctionGradientImplementation<idx...>(
+      return computeReverseModeScalarFunctionGradientImplementation<idx...>(
           c, getArgumentsList<CallableType>(),
           std::forward<ArgumentsTypes>(args)...);
     }
-  }  // end of computeScalarFunctionGradient
+  }  // end of computeReverseModeScalarFunctionGradient
 
   template <std::size_t idx,
             EnzymeCallableConcept CallableType,
             typename... CallableArgumentsTypes,
             typename... ArgumentsTypes>
-  auto computeMathObjectFunctionGradient(
+  auto computeReverseModeMathObjectFunctionGradient(
       const CallableType& c,
       const TypeList<CallableArgumentsTypes...>,
       ArgumentsTypes&&... args)  //
@@ -338,7 +338,7 @@ namespace tfel::math::enzyme::internals {
         auto result = c(wargs...);
         return result[i];
       };
-      const auto row = computeGradient<idx>(wrapper, args...);
+      const auto row = computeReverseModeGradient<idx>(wrapper, args...);
       if constexpr (ScalarConcept<decltype(row)>) {
         // derivation with respect to a scalar
         r[i] = row;
@@ -362,46 +362,49 @@ namespace tfel::math::enzyme::internals {
       }
     }
     return r;
-  }  // end of computeMathObjectFunctionGradient
+  }  // end of computeReverseModeMathObjectFunctionGradient
 
   template <std::size_t... idx,
             IsFunctionPointerConcept auto F,
             typename... CallableArgumentsTypes,
             typename... ArgumentsTypes>
-  auto computeGradientImplementation(FunctionWrapper<F>,
-                                     const TypeList<CallableArgumentsTypes...>&,
-                                     ArgumentsTypes&&... args)  //
+  auto computeReverseModeGradientImplementation(
+      FunctionWrapper<F>,
+      const TypeList<CallableArgumentsTypes...>&,
+      ArgumentsTypes&&... args)  //
     requires((sizeof...(CallableArgumentsTypes) == sizeof...(ArgumentsTypes)) &&
              (std::is_invocable_v<decltype(F), CallableArgumentsTypes...>))
   {
     auto c = [](const CallableArgumentsTypes... wargs) { return F(wargs...); };
-    return ::tfel::math::enzyme::computeGradient<idx...>(
+    return ::tfel::math::enzyme::computeReverseModeGradient<idx...>(
         c, std::forward<ArgumentsTypes>(args)...);
-  }  // end of computeGradientImplementation
+  }  // end of computeReverseModeGradientImplementation
 
   template <std::size_t... idx,
             EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeGradientImplementation(const std::index_sequence<idx...>,
-                                     const CallableType& c,
-                                     ArgumentsTypes&&... arg)  //
+  auto computeReverseModeGradientImplementation(
+      const std::index_sequence<idx...>,
+      const CallableType& c,
+      ArgumentsTypes&&... arg)  //
     requires(std::is_invocable_v<CallableType, ArgumentsTypes...>)
   {
-    return ::tfel::math::enzyme::computeGradient<idx...>(
+    return ::tfel::math::enzyme::computeReverseModeGradient<idx...>(
         c, std::forward<ArgumentsTypes>(arg)...);
-  }  // end of computeGradientImplementation
+  }  // end of computeReverseModeGradientImplementation
 
   template <std::size_t... idx,
             IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeGradientImplementation(const std::index_sequence<idx...>,
-                                     FunctionWrapper<F> f,
-                                     ArgumentsTypes&&... arg)  //
+  auto computeReverseModeGradientImplementation(
+      const std::index_sequence<idx...>,
+      FunctionWrapper<F> f,
+      ArgumentsTypes&&... arg)  //
     requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>)
   {
-    return ::tfel::math::enzyme::computeGradient<idx...>(
+    return ::tfel::math::enzyme::computeReverseModeGradient<idx...>(
         f, std::forward<ArgumentsTypes>(arg)...);
-  }  // end of computeGradientImplementation
+  }  // end of computeReverseModeGradientImplementation
 
 }  // namespace tfel::math::enzyme::internals
 
@@ -410,8 +413,8 @@ namespace tfel::math::enzyme {
   template <std::size_t... idx,
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeGradient(const CallableType& c,
-                       ArgumentsTypes&&... args)  //
+  auto computeReverseModeGradient(const CallableType& c,
+                                  ArgumentsTypes&&... args)  //
     requires((sizeof...(ArgumentsTypes) > 0) &&
              (sizeof...(ArgumentsTypes) < 3) &&  //
              (sizeof...(idx) > 0) &&
@@ -424,23 +427,23 @@ namespace tfel::math::enzyme {
     using CallableResultType =
         std::invoke_result_t<CallableType, ArgumentsTypes...>;
     if constexpr (ScalarConcept<CallableResultType>) {
-      return internals::computeScalarFunctionGradient<idx...>(
+      return internals::computeReverseModeScalarFunctionGradient<idx...>(
           c, std::forward<ArgumentsTypes>(args)...);
     } else {
       static_assert(sizeof...(idx) == 1,
                     "callable returning a non-scalar value can't be "
                     "differentiated with respect to more than a variable");
-      return internals::computeMathObjectFunctionGradient<idx...>(
+      return internals::computeReverseModeMathObjectFunctionGradient<idx...>(
           c, internals::getArgumentsList<CallableType>(),
           std::forward<ArgumentsTypes>(args)...);
     }
-  }  // end of computeGradient
+  }  // end of computeReverseModeGradient
 
   template <std::size_t... idx,
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeGradient(internals::FunctionWrapper<F> f,
-                       ArgumentsTypes&&... args)  //
+  auto computeReverseModeGradient(internals::FunctionWrapper<F> f,
+                                  ArgumentsTypes&&... args)  //
     requires(
         (sizeof...(ArgumentsTypes) > 0) &&
         (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -449,37 +452,37 @@ namespace tfel::math::enzyme {
         (std::is_invocable_v<decltype(F), ArgumentsTypes...>) &&  //
         (VariableConcept<std::invoke_result_t<decltype(F), ArgumentsTypes...>>))
   {
-    return internals::computeGradientImplementation<idx...>(
+    return internals::computeReverseModeGradientImplementation<idx...>(
         f, internals::getArgumentsList<decltype(F)>(),
         std::forward<ArgumentsTypes>(args)...);
-  }  // end of computeGradient
+  }  // end of computeReverseModeGradient
 
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeGradient(const CallableType& c,
-                       ArgumentsTypes&&... args)                        //
+  auto computeReverseModeGradient(const CallableType& c,
+                                  ArgumentsTypes&&... args)             //
     requires((std::is_invocable_v<CallableType, ArgumentsTypes...>) &&  //
              (VariableConcept<
                  std::invoke_result_t<CallableType, ArgumentsTypes...>>))
   {
-    return internals::computeGradientImplementation(
+    return internals::computeReverseModeGradientImplementation(
         std::make_index_sequence<sizeof...(ArgumentsTypes)>{}, c,
         std::forward<ArgumentsTypes>(args)...);
-  }  // end of computeGradient
+  }  // end of computeReverseModeGradient
 
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeGradient(internals::FunctionWrapper<F> f,
-                       ArgumentsTypes&&... args)  //
+  auto computeReverseModeGradient(internals::FunctionWrapper<F> f,
+                                  ArgumentsTypes&&... args)  //
     requires(
         (std::is_invocable_v<decltype(F), ArgumentsTypes...>) &&  //
         (VariableConcept<std::invoke_result_t<decltype(F), ArgumentsTypes...>>))
   {
-    return internals::computeGradientImplementation(
+    return internals::computeReverseModeGradientImplementation(
         std::make_index_sequence<sizeof...(ArgumentsTypes)>{}, f,
         std::forward<ArgumentsTypes>(args)...);
-  }  // end of computeGradient
+  }  // end of computeReverseModeGradient
 
 }  // namespace tfel::math::enzyme
 
-#endif /* LIB_TFEL_MATH_ENZYME_AUTODIFF_IXX */
+#endif /* LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEGRADIENT_IXX */

@@ -24,7 +24,6 @@ namespace tfel::math::enzyme {
 
 }  // end of namespace tfel::math::enzyme
 
-#include"TFEL/Math/Enzyme/getForwardModeGradientFunction.ixx"
+#include "TFEL/Math/Enzyme/getForwardModeGradientFunction.ixx"
 
 #endif /* LIB_TFEL_MATH_ENZYME_GETDERIVATIVE_HXX */
-

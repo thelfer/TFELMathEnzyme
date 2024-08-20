@@ -1,5 +1,5 @@
 /*!
- * \file   tests/test1.cxx
+ * \file   tests/fwddiff.cxx
  * \brief
  * \author Thomas Helfer
  * \date   20/08/2024
@@ -18,7 +18,6 @@
 #include "TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
 #include "TFEL/Material/Lame.hxx"
 #include "TFEL/Math/Enzyme/fwddiff.hxx"
-#include "TFEL/Math/Enzyme/autodiff.hxx"
 
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
