@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Spack
+      uses: spack/setup-spack@v2
+      with:
+        ref: develop      # Spack version (examples: develop, releases/v0.21)
+        buildcache: true  # Configure oci://ghcr.io/spack/github-actions-buildcache
+        color: true       # Force color output (SPACK_COLOR=always)
+        path: ${{github.workspace}}/spack       # Where to clone Spack
+
+    - name: Install TFEL and Enzyme
+      shell: spack-sh {0}
+      run: |
+        spack install enzyme
+        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+    - name: cmake
+      shell: spack-sh {0}
+      run: |
+        spack load enzyme
+        spack load tfel
+        cmake -DCMAKE_BUILD_TYPE=Release .
+    - name: make
+      shell: spack-sh {0}
+      run: |
+        spack load enzyme tfel
+        make
+    - name: make check
+      shell: spack-sh {0}
+      run: |
+        spack load enzyme tfel
+        make check
