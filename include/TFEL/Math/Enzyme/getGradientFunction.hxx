@@ -15,12 +15,16 @@
 #define LIB_TFEL_MATH_ENZYME_GETGRADIENTFUNCTION_HXX
 
 #include "TFEL/Math/Enzyme/Internals/Enzyme.hxx"
+#include "TFEL/Math/Enzyme/Internals/FunctionUtilities.hxx"
 
 namespace tfel::math::enzyme {
 
   template <Mode m,
             std::size_t... Ns,
             internals::EnzymeCallableConcept CallableType>
+  auto getGradientFunction(const CallableType&);
+
+  template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
   auto getGradientFunction(const CallableType&);
 
 }  // end of namespace tfel::math::enzyme

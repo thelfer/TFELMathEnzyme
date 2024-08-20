@@ -22,10 +22,10 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
-struct TFELMathEnzymeGetDerivative final : public tfel::tests::TestCase {
-  TFELMathEnzymeGetDerivative()
+struct TFELMathEnzymeGetForwardModeGradientFunction final : public tfel::tests::TestCase {
+  TFELMathEnzymeGetForwardModeGradientFunction()
       : tfel::tests::TestCase("TFEL/Math/Enzyme",
-                              "TFELMathEnzymeGetDerivative") {
+                              "TFELMathEnzymeGetForwardModeGradientFunction") {
   }  // end of TFELMathEnzyme
   tfel::tests::TestResult execute() override {
     this->test1();
@@ -147,13 +147,13 @@ struct TFELMathEnzymeGetDerivative final : public tfel::tests::TestCase {
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(TFELMathEnzymeGetDerivative,
-                          "TFELMathEnzymeGetDerivative");
+TFEL_TESTS_GENERATE_PROXY(TFELMathEnzymeGetForwardModeGradientFunction,
+                          "TFELMathEnzymeGetForwardModeGradientFunction");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("tfel-math-enzyme-get-derivative.xml");
+  m.addXMLTestOutput("tfel-math-enzyme-getForwardModeGradientFunction.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

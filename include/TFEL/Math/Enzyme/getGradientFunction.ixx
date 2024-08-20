@@ -23,12 +23,18 @@ namespace tfel::math::enzyme {
             std::size_t... Ns,
             internals::EnzymeCallableConcept CallableType>
   auto getGradientFunction(const CallableType& c) {
-    if (Mode == Mode::FORWARD) {
-      return getForwardModeGradientFunction(c);
+    if constexpr (m == Mode::FORWARD) {
+      return getForwardModeGradientFunction<Ns...>(c);
     } else {
-      return getReverseModeGradientFunction(c);
+      return getReverseModeGradientFunction<Ns...>(c);
     }
   }
+
+  template <std::size_t... Ns,
+            internals::EnzymeCallableConcept CallableType>
+  auto getGradientFunction(const CallableType& c) {
+    return getGradientFunction<Mode::REVERSE, Ns...>(c);
+  } // end of getGradientFunction
 
 }  // end of namespace tfel::math::enzyme
 
