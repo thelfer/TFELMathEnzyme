@@ -18,6 +18,19 @@
 
 namespace tfel::math::enzyme::internals {
 
+  template <typename... CallableArgumentsTypes, typename... ArgumentsTypes>
+  constexpr void checkCallEnzymeFwdDiffArguments(
+      const TypeList<CallableArgumentsTypes...>&,
+      const TypeList<ArgumentsTypes...>&) noexcept
+      requires(sizeof...(CallableArgumentsTypes) == sizeof...(ArgumentsTypes)) {
+    static_assert(
+        countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() != 0u,
+        "one argument of type VariableValueAndIncrement is expected");
+    static_assert(
+        countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() == 1u,
+        "only one argument of type VariableValueAndIncrement is expected");
+  }  // end of checkCallEnzymeFwdDiffArguments
+
   template <typename CallableType,
             typename CallableArgumentType,
             typename ArgumentType>
@@ -25,7 +38,7 @@ namespace tfel::math::enzyme::internals {
                              const CallableType& c,
                              ArgumentType&& arg)  //
       requires(isVariableValueAndIncrement<std::decay_t<ArgumentType>>()) {
-    checkCallEnzymeArguments(TypeList<CallableArgumentType>{},
+    checkCallEnzymeFwdDiffArguments(TypeList<CallableArgumentType>{},
                              TypeList<ArgumentType>{});
     auto wrapper = [](const CallableType* const ptr,
                       const CallableArgumentType warg) { return (*ptr)(warg); };
@@ -48,7 +61,7 @@ namespace tfel::math::enzyme::internals {
       const CallableType& c,
       ArgumentType0&& arg0,
       ArgumentType1&& arg1) {
-    checkCallEnzymeArguments(
+    checkCallEnzymeFwdDiffArguments(
         TypeList<CallableArgumentType0, CallableArgumentType1>{},
         TypeList<ArgumentType0, ArgumentType1>{});
     using ResultType = std::invoke_result_t<CallableType, CallableArgumentType0,
@@ -88,7 +101,7 @@ namespace tfel::math::enzyme::internals {
                              ArgumentType0&& arg0,
                              ArgumentType1&& arg1,
                              ArgumentType2&& arg2) {
-    checkCallEnzymeArguments(
+    checkCallEnzymeFwdDiffArguments(
         TypeList<CallableArgumentType0, CallableArgumentType1,
                  CallableArgumentType2>{},
         TypeList<ArgumentType0, ArgumentType1, ArgumentType2>{});
@@ -147,7 +160,7 @@ namespace tfel::math::enzyme::internals {
                              ArgumentType1&& arg1,
                              ArgumentType2&& arg2,
                              ArgumentType3&& arg3) {
-    checkCallEnzymeArguments(
+    checkCallEnzymeFwdDiffArguments(
         TypeList<CallableArgumentType0, CallableArgumentType1,
                  CallableArgumentType2, CallableArgumentType3>{},
         TypeList<ArgumentType0, ArgumentType1, ArgumentType2, ArgumentType3>{});

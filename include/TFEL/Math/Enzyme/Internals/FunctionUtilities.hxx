@@ -87,6 +87,19 @@ namespace tfel::math::enzyme::internals {
     return getTypeListSize(List{});
   }
 
+  /*!
+   * \brief A simple concept to select a suitable callable, i.e. a type which
+   * has a call operator but is not a function, nor a function pointer.
+   *
+   * \note Regular functions are treated separately due to the way Enzyme works:
+   * they must be passed as template parameters and not by pointer, otherwise,
+   * the symbol associated with the function is not seen by Enzyme.
+   */
+  template <typename CallableType>
+  concept EnzymeCallableConcept =
+      (!isFunction<CallableType>()) && (!isFunctionPointer<CallableType>()) &&
+      (hasCallOperator<CallableType>());
+
 }  // end of namespace tfel::math::enzyme::internals
 
 namespace tfel::math::enzyme{

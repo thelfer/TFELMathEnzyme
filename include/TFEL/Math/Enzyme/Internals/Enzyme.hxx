@@ -50,10 +50,6 @@ namespace tfel::math::enzyme::internals {
   struct IsConvertible : std::is_convertible<SourceType, DestinationType> {};
 
   template <typename SourceType, typename DestinationType>
-  struct IsConvertible<VariableValueAndIncrement<SourceType>, DestinationType>
-      : std::is_convertible<SourceType, DestinationType> {};
-
-  template <typename SourceType, typename DestinationType>
   constexpr bool isConvertible() noexcept {
     return IsConvertible<SourceType, DestinationType>::value;
   }  // end of isConvertible
@@ -159,19 +155,6 @@ namespace tfel::math::enzyme::internals {
     checkCallEnzymeArgumentsConsistency(TypeList<CallableArgumentsTypes...>(),
                                         TypeList<ArgumentsTypes...>());
   }  // end of checkCallEnzymeArgumentsConsistency
-
-  template <typename... CallableArgumentsTypes, typename... ArgumentsTypes>
-  constexpr void checkCallEnzymeArguments(
-      const TypeList<CallableArgumentsTypes...>&,
-      const TypeList<ArgumentsTypes...>&) noexcept
-      requires(sizeof...(CallableArgumentsTypes) == sizeof...(ArgumentsTypes)) {
-    static_assert(
-        countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() != 0u,
-        "one argument of type VariableValueAndIncrement is expected");
-    static_assert(
-        countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() == 1u,
-        "only one argument of type VariableValueAndIncrement is expected");
-  }  // end of checkCallEnzymeArguments
 
 }  // end of namespace tfel::math::enzyme::internals
 

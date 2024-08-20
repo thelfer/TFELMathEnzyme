@@ -9,6 +9,7 @@
 #define LIB_TFEL_MATH_ENZYME_AUTODIFF_HXX
 
 #include <cstddef>
+#include "TFEL/Math/Enzyme/Internals/Enzyme.hxx"
 #include "TFEL/Math/Enzyme/Variable.hxx"
 #include "TFEL/Math/Enzyme/Internals/FunctionUtilities.hxx"
 

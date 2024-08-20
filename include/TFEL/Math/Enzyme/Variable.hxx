@@ -9,6 +9,7 @@
 #define LIB_TFEL_MATH_ENZYME_VARIABLE_HXX
 
 #include "TFEL/Math/General/MathObjectTraits.hxx"
+#include "TFEL/Math/Enzyme/Internals/Enzyme.hxx"
 #include "TFEL/Math/Enzyme/Internals/IsTemporary.hxx"
 
 namespace tfel::math::enzyme {
@@ -45,7 +46,6 @@ namespace tfel::math::enzyme {
 
 namespace tfel::math::enzyme::internals {
 
-
   template <typename VariableType>
   struct IsVariableValueAndIncrement : std::false_type {};
 
@@ -63,6 +63,10 @@ namespace tfel::math::enzyme::internals {
   constexpr auto countNumberOfVariableValueAndIncrement() noexcept {
     return ((isVariableValueAndIncrement<Types>() ? 1 : 0) + ...);
   }  // end of countNumberOfVariableValueAndIncrement
+
+  template <typename SourceType, typename DestinationType>
+  struct IsConvertible<VariableValueAndIncrement<SourceType>, DestinationType>
+      : std::is_convertible<SourceType, DestinationType> {};
 
 } // end of namespace tfel::math::enzyme::internals 
 

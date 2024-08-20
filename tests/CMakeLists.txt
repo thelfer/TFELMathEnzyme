@@ -1,0 +1,9 @@
+function(add_tfel_math_enzyme_test name)
+  add_executable(${name}-test ${name}.cxx)
+  target_link_libraries(${name}-test PUBLIC TFELMathEnzyme tfel::TFELTests)
+  add_test(NAME ${name}-TEST COMMAND ${name}-test)
+endfunction()
+
+add_tfel_math_enzyme_test(fwddiff)
+add_tfel_math_enzyme_test(computeGradient)
+add_tfel_math_enzyme_test(getDerivative)
