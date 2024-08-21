@@ -24,7 +24,6 @@ jobs:
     - name: Install TFEL and Enzyme
       shell: spack-sh {0}
       run: |
-        sudo apt install cmake
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh 18
@@ -42,8 +41,8 @@ jobs:
       shell: spack-sh {0}
       run: |
         spack load tfel
-        /usr/bin/cmake -DCMAKE_BUILD_TYPE=Release . -DTFEL_DIR=`spack location -i tfel` -DEnzyme_DIR=${{github.workspace}}/enzyme
-    - name: make
+        cmake -DCMAKE_BUILD_TYPE=Release . -DTFEL_DIR=`spack location -i tfel` -DEnzyme_DIR=${{github.workspace}}/enzyme
+    - name: make       
       shell: spack-sh {0}
       run: |
         spack load tfel
