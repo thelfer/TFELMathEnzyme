@@ -27,6 +27,14 @@ namespace tfel::math::enzyme {
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
   auto getDerivativeFunction(const CallableType&);
 
+  template <Mode m,
+            std::size_t... idx,
+            internals::IsFunctionPointerConcept auto F>
+  auto getDerivativeFunction(internals::FunctionWrapper<F>);
+
+  template <std::size_t... idx, internals::IsFunctionPointerConcept auto F>
+  auto getDerivativeFunction(internals::FunctionWrapper<F>);
+
 }  // end of namespace tfel::math::enzyme
 
 #include "TFEL/Math/Enzyme/getDerivativeFunction.ixx"

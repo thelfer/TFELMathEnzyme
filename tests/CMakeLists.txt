@@ -5,6 +5,7 @@ function(add_tfel_math_enzyme_test name)
 endfunction()
 
 add_tfel_math_enzyme_test(fwddiff)
+add_tfel_math_enzyme_test(computeDerivative)
 add_tfel_math_enzyme_test(computeReverseModeDerivative)
 add_tfel_math_enzyme_test(getForwardModeDerivativeFunction)
 add_tfel_math_enzyme_test(getDerivativeFunction)

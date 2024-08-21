@@ -47,11 +47,12 @@ static tfel::math::stensor<2u, double> deviator(
   return ::tfel::math::deviator(s);
 }  // end of deviator
 
-struct TFELMathEnzymeComputeDerivative final : public tfel::tests::TestCase {
-  TFELMathEnzymeComputeDerivative()
+struct TFELMathEnzymeComputeReversModeDerivative final
+    : public tfel::tests::TestCase {
+  TFELMathEnzymeComputeReversModeDerivative()
       : tfel::tests::TestCase("TFEL/Math/Enzyme",
-                              "TFELMathEnzymeComputeDerivative") {
-  }  // end of TFELMathEnzymeComputeDerivative
+                              "TFELMathEnzymeComputeReversModeDerivative") {
+  }  // end of TFELMathEnzymeComputeReversModeDerivative
   tfel::tests::TestResult execute() override {
     using namespace tfel::math;
     this->test1();
@@ -71,26 +72,28 @@ struct TFELMathEnzymeComputeDerivative final : public tfel::tests::TestCase {
     constexpr auto a = double{2.3};
     const auto v = double{1};
     const auto c = [](const double x) { return std::cos(x); };
-    TFEL_TESTS_ASSERT(std::abs(computeReverseModeDerivative(c, v) + std::sin(v)) <
-                      eps);
+    TFEL_TESTS_ASSERT(
+        std::abs(computeReverseModeDerivative(c, v) + std::sin(v)) < eps);
     TFEL_TESTS_ASSERT(
         std::abs(computeReverseModeDerivative<0>(c, v) + std::sin(v)) < eps);
     const auto c2 = [](const double x) { return a * std::sin(x); };
     const auto dc2_dx = computeReverseModeDerivative(c2, v);
+    TFEL_TESTS_ASSERT(std::abs(dc2_dx - a * std::cos(v)) < eps);
     const auto c3 = [&c](const double x) {
       return computeReverseModeDerivative(c, x);
     };
     const auto dc3_dx = computeReverseModeDerivative(c3, v);
     TFEL_TESTS_ASSERT(std::abs(dc3_dx + std::cos(v)) < eps);
-    TFEL_TESTS_ASSERT(std::abs(dc2_dx - a * std::cos(v)) < eps);
     TFEL_TESTS_ASSERT(
         std::abs(computeReverseModeDerivative(function<f>, 2) - 12) < eps);
     TFEL_TESTS_ASSERT(
         std::abs(computeReverseModeDerivative<0>(function<f>, 2) - 12) < eps);
     TFEL_TESTS_ASSERT(
-        std::abs(computeReverseModeDerivative<0>(function<f2>, 2, 1) - 1) < eps);
+        std::abs(computeReverseModeDerivative<0>(function<f2>, 2, 1) - 1) <
+        eps);
     TFEL_TESTS_ASSERT(
-        std::abs(computeReverseModeDerivative<1>(function<f2>, 2, 1) - 2) < eps);
+        std::abs(computeReverseModeDerivative<1>(function<f2>, 2, 1) - 2) <
+        eps);
     const auto [df_dx, df_dy] =
         computeReverseModeDerivative<0, 1>(function<f2>, 2, 1);
     TFEL_TESTS_ASSERT(std::abs(df_dx - 1) < eps);
@@ -99,7 +102,8 @@ struct TFELMathEnzymeComputeDerivative final : public tfel::tests::TestCase {
   void test2() {
     using namespace tfel::math::enzyme;
     constexpr auto eps = double{1e-14};
-    const auto [df_dx, df_dy] = computeReverseModeDerivative(function<f3>, 3, 2);
+    const auto [df_dx, df_dy] =
+        computeReverseModeDerivative(function<f3>, 3, 2);
     TFEL_TESTS_ASSERT(std::abs(df_dx - 2) < eps);
     TFEL_TESTS_ASSERT(std::abs(df_dy - 2.75) < eps);
   }
@@ -197,8 +201,8 @@ struct TFELMathEnzymeComputeDerivative final : public tfel::tests::TestCase {
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(TFELMathEnzymeComputeDerivative,
-                          "TFELMathEnzymeComputeDerivative");
+TFEL_TESTS_GENERATE_PROXY(TFELMathEnzymeComputeReversModeDerivative,
+                          "TFELMathEnzymeComputeReversModeDerivative");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
