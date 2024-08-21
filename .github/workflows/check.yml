@@ -36,7 +36,7 @@ jobs:
       shell: spack-sh {0}
       run: |
         spack load tfel enzyme
-        cmake -DCMAKE_BUILD_TYPE=Release .
+        cmake -DCMAKE_BUILD_TYPE=Release . -DTFEL_DIR=`spack location -i tfel` -DEnzyme_DIR=`spack location -i enzyme`
     - name: make
       shell: spack-sh {0}
       run: |
