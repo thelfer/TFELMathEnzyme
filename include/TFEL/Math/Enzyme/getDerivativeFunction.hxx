@@ -1,6 +1,6 @@
 /*!
- * \file   TFEL/Math/Enzyme/getGradientFunction.hxx
- * \brief  This file declares the getGradientFunction function
+ * \file   TFEL/Math/Enzyme/getDerivativeFunction.hxx
+ * \brief  This file declares the getDerivativeFunction function
  * \author Thomas Helfer
  * \date   09/08/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_ENZYME_GETGRADIENTFUNCTION_HXX
-#define LIB_TFEL_MATH_ENZYME_GETGRADIENTFUNCTION_HXX
+#ifndef LIB_TFEL_MATH_ENZYME_GETDERIVATIVEFUNCTION_HXX
+#define LIB_TFEL_MATH_ENZYME_GETDERIVATIVEFUNCTION_HXX
 
 #include "TFEL/Math/Enzyme/Internals/Enzyme.hxx"
 #include "TFEL/Math/Enzyme/Internals/FunctionUtilities.hxx"
@@ -22,13 +22,13 @@ namespace tfel::math::enzyme {
   template <Mode m,
             std::size_t... Ns,
             internals::EnzymeCallableConcept CallableType>
-  auto getGradientFunction(const CallableType&);
+  auto getDerivativeFunction(const CallableType&);
 
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
-  auto getGradientFunction(const CallableType&);
+  auto getDerivativeFunction(const CallableType&);
 
 }  // end of namespace tfel::math::enzyme
 
-#include "TFEL/Math/Enzyme/getGradientFunction.ixx"
+#include "TFEL/Math/Enzyme/getDerivativeFunction.ixx"
 
-#endif /* LIB_TFEL_MATH_ENZYME_GETGRADIENTFUNCTION_HXX */
+#endif /* LIB_TFEL_MATH_ENZYME_GETDERIVATIVEFUNCTION_HXX */

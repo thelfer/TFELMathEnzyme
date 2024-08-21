@@ -1,5 +1,5 @@
 /*!
- * \file   TFEL/Math/Enzyme/computeForwardModeGradient.ixx
+ * \file   TFEL/Math/Enzyme/computeForwardModeDerivative.ixx
  * \brief  This file implements the getDerivative function
  * \author Thomas Helfer
  * \date   09/08/2024
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEGRADIENT_IXX
-#define LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEGRADIENT_IXX
+#ifndef LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEDERIVATIVE_IXX
+#define LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEDERIVATIVE_IXX
 
 #include "TFEL/Math/General/DerivativeType.hxx"
 
@@ -21,7 +21,7 @@ namespace tfel::math::enzyme::internals {
   template <EnzymeCallableConcept CallableType,
             typename CallableArgumentType0,
             typename ArgumentType0>
-  auto computeForwardModeGradientImplementation(
+  auto computeForwardModeDerivativeImplementation(
       const CallableType& c,
       const TypeList<CallableArgumentType0>&,
       ArgumentType0&&
@@ -63,7 +63,7 @@ namespace tfel::math::enzyme::internals {
       }
       return r;
     }
-  }  // end of computeForwardModeGradientImplementation
+  }  // end of computeForwardModeDerivativeImplementation
 
 }  // end of namespace tfel::math::enzyme::internals
 
@@ -71,7 +71,7 @@ namespace tfel::math::enzyme {
 
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeForwardModeGradient(
+  auto computeForwardModeDerivative(
       const CallableType& c,
       ArgumentsTypes&&... args) requires(std::
                                              is_invocable_v<
@@ -79,11 +79,11 @@ namespace tfel::math::enzyme {
                                                  ArgumentsTypes...>) {
     static_assert(sizeof...(ArgumentsTypes) == 1,
                   "only callable of one variable are supported");
-    return internals::computeForwardModeGradientImplementation(
+    return internals::computeForwardModeDerivativeImplementation(
         c, internals::getArgumentsList<CallableType>(),
         std::forward<ArgumentsTypes>(args)...);
-  }  // end of computeForwardModeGradient
+  }  // end of computeForwardModeDerivative
 
 }  // end of namespace tfel::math::enzyme
 
-#endif /* LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEGRADIENT_IXX */
+#endif /* LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEDERIVATIVE_IXX */

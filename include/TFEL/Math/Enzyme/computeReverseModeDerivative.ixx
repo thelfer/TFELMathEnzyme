@@ -1,12 +1,12 @@
 /*!
- * \file   TFEL/Math/Enzyme/computeReverseModeGradient.ixx
+ * \file   TFEL/Math/Enzyme/computeReverseModeDerivative.ixx
  * \brief
  * \author Thomas Helfer
  * \date   19/08/2024
  */
 
-#ifndef LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEGRADIENT_IXX
-#define LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEGRADIENT_IXX
+#ifndef LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEDERIVATIVE_IXX
+#define LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEDERIVATIVE_IXX
 
 #include <tuple>
 #include <utility>
@@ -15,46 +15,46 @@
 
 namespace tfel::math::enzyme::internals {
 
-  template <std::size_t N, typename GradientType>
-  struct GradientHolder {
-    GradientType value;
+  template <std::size_t N, typename DerivativeType>
+  struct DerivativeHolder {
+    DerivativeType value;
   };
 
   template <std::size_t N,
-            typename CurrentGradientType,
-            typename... GradientsTypes>
-  struct PackedGradientsImplementation
-      : GradientHolder<N, CurrentGradientType>,
-        PackedGradientsImplementation<N + 1, GradientsTypes...> {};
+            typename CurrentDerivativeType,
+            typename... DerivativesTypes>
+  struct PackedDerivativesImplementation
+      : DerivativeHolder<N, CurrentDerivativeType>,
+        PackedDerivativesImplementation<N + 1, DerivativesTypes...> {};
 
-  template <std::size_t N, typename GradientType>
-  struct PackedGradientsImplementation<N, GradientType>
-      : GradientHolder<N, GradientType> {};
+  template <std::size_t N, typename DerivativeType>
+  struct PackedDerivativesImplementation<N, DerivativeType>
+      : DerivativeHolder<N, DerivativeType> {};
 
 }  // namespace tfel::math::enzyme::internals
 
 namespace tfel::math::enzyme {
 
-  template <typename... GradientsTypes>
-  struct PackedGradients
-      : internals::PackedGradientsImplementation<0, GradientsTypes...> {};
+  template <typename... DerivativesTypes>
+  struct PackedDerivatives
+      : internals::PackedDerivativesImplementation<0, DerivativesTypes...> {};
 
-  template <std::size_t N, typename... GradientsTypes>
-  auto& get(PackedGradients<GradientsTypes...>& gradients) noexcept  //
-      requires(N < sizeof...(GradientsTypes)) {
+  template <std::size_t N, typename... DerivativesTypes>
+  auto& get(PackedDerivatives<DerivativesTypes...>& gradients) noexcept  //
+      requires(N < sizeof...(DerivativesTypes)) {
     using DerivativeType =
-        std::tuple_element_t<N, std::tuple<GradientsTypes...>>;
-    return static_cast<internals::GradientHolder<N, DerivativeType>&>(gradients)
+        std::tuple_element_t<N, std::tuple<DerivativesTypes...>>;
+    return static_cast<internals::DerivativeHolder<N, DerivativeType>&>(gradients)
         .value;
   }  // end of get
 
-  template <std::size_t N, typename... GradientsTypes>
+  template <std::size_t N, typename... DerivativesTypes>
   const auto& get(
-      const PackedGradients<GradientsTypes...>& gradients) noexcept  //
-      requires(N < sizeof...(GradientsTypes)) {
+      const PackedDerivatives<DerivativesTypes...>& gradients) noexcept  //
+      requires(N < sizeof...(DerivativesTypes)) {
     using DerivativeType =
-        std::tuple_element_t<N, std::tuple<GradientsTypes...>>;
-    return static_cast<const internals::GradientHolder<N, DerivativeType>&>(
+        std::tuple_element_t<N, std::tuple<DerivativesTypes...>>;
+    return static_cast<const internals::DerivativeHolder<N, DerivativeType>&>(
                gradients)
         .value;
   }  // end of get
@@ -63,14 +63,14 @@ namespace tfel::math::enzyme {
 
 namespace std {
 
-  template <typename... GradientsTypes>
-  struct tuple_size<::tfel::math::enzyme::PackedGradients<GradientsTypes...>>
-      : integral_constant<size_t, sizeof...(GradientsTypes)> {};
+  template <typename... DerivativesTypes>
+  struct tuple_size<::tfel::math::enzyme::PackedDerivatives<DerivativesTypes...>>
+      : integral_constant<size_t, sizeof...(DerivativesTypes)> {};
 
-  template <std::size_t N, typename... GradientsTypes>
+  template <std::size_t N, typename... DerivativesTypes>
   struct tuple_element<N,
-                       ::tfel::math::enzyme::PackedGradients<GradientsTypes...>>
-      : tuple_element<N, std::tuple<GradientsTypes...>> {};
+                       ::tfel::math::enzyme::PackedDerivatives<DerivativesTypes...>>
+      : tuple_element<N, std::tuple<DerivativesTypes...>> {};
 
 }  // namespace std
 
@@ -79,7 +79,7 @@ namespace tfel::math::enzyme::internals {
   template <std::size_t... idx,
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeReverseModeScalarFunctionGradient(const CallableType&,
+  auto computeReverseModeScalarFunctionDerivative(const CallableType&,
                                                 ArgumentsTypes&&...)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -92,7 +92,7 @@ namespace tfel::math::enzyme::internals {
 
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeReverseModeScalarFunctionGradient(const CallableType&,
+  auto computeReverseModeScalarFunctionDerivative(const CallableType&,
                                                 ArgumentsTypes&&...)     //
       requires((std::is_invocable_v<CallableType, ArgumentsTypes...>)&&  //
                (ScalarConcept<
@@ -101,7 +101,7 @@ namespace tfel::math::enzyme::internals {
   template <std::size_t... idx,
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeReverseModeScalarFunctionGradient(internals::FunctionWrapper<F>,
+  auto computeReverseModeScalarFunctionDerivative(internals::FunctionWrapper<F>,
                                                 ArgumentsTypes&&...)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -114,7 +114,7 @@ namespace tfel::math::enzyme::internals {
 
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeReverseModeScalarFunctionGradient(internals::FunctionWrapper<F>,
+  auto computeReverseModeScalarFunctionDerivative(internals::FunctionWrapper<F>,
                                                 ArgumentsTypes&&...)    //
       requires((std::is_invocable_v<decltype(F), ArgumentsTypes...>)&&  //
                (ScalarConcept<
@@ -123,7 +123,7 @@ namespace tfel::math::enzyme::internals {
   template <EnzymeCallableConcept CallableType,
             typename CallableArgumentType,
             typename ArgumentType>
-  auto computeReverseModeScalarFunctionGradientImplementation(
+  auto computeReverseModeScalarFunctionDerivativeImplementation(
       const CallableType& c,
       const TypeList<CallableArgumentType>&,
       ArgumentType&& arg)  //
@@ -167,7 +167,7 @@ namespace tfel::math::enzyme::internals {
             typename CallableArgumentType1,
             typename ArgumentType0,
             typename ArgumentType1>
-  auto computeReverseModeScalarFunctionGradientImplementation(
+  auto computeReverseModeScalarFunctionDerivativeImplementation(
       const CallableType& c,
       const TypeList<CallableArgumentType0, CallableArgumentType1>&,
       ArgumentType0&& arg0,
@@ -232,13 +232,13 @@ namespace tfel::math::enzyme::internals {
         return r;
       }
     } else {
-      using GradientType0 =
+      using DerivativeType0 =
           derivative_type<CallableResultType,
                           std::decay_t<CallableArgumentType0>>;
-      using GradientType1 =
+      using DerivativeType1 =
           derivative_type<CallableResultType,
                           std::decay_t<CallableArgumentType1>>;
-      using ResultType = PackedGradients<GradientType0, GradientType1>;
+      using ResultType = PackedDerivatives<DerivativeType0, DerivativeType1>;
       if constexpr ((ScalarConcept<std::decay_t<CallableArgumentType0>>)&&  //
                     (ScalarConcept<std::decay_t<CallableArgumentType1>>)) {
         return __enzyme_autodiff<ResultType>(
@@ -249,7 +249,7 @@ namespace tfel::math::enzyme::internals {
             enzyme_out, convertToEnzymeArgument<CallableArgumentType1>(arg1));
       } else if constexpr (ScalarConcept<std::decay_t<CallableArgumentType0>>) {
         auto r = ResultType{};
-        std::get<0>(r) = __enzyme_autodiff<GradientType0>(
+        std::get<0>(r) = __enzyme_autodiff<DerivativeType0>(
             wrapper_ptr, enzyme_const,
             c_ptr,  //
             enzyme_out,
@@ -259,7 +259,7 @@ namespace tfel::math::enzyme::internals {
         return r;
       } else if constexpr (ScalarConcept<std::decay_t<CallableArgumentType1>>) {
         auto r = ResultType{};
-        std::get<1>(r) = __enzyme_autodiff<GradientType1>(
+        std::get<1>(r) = __enzyme_autodiff<DerivativeType1>(
             wrapper_ptr, enzyme_const,
             c_ptr,  //
             enzyme_dup, convertToEnzymeArgument<CallableArgumentType0>(arg0),
@@ -283,7 +283,7 @@ namespace tfel::math::enzyme::internals {
   template <std::size_t... idx,
             EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeReverseModeScalarFunctionGradient(const CallableType& c,
+  auto computeReverseModeScalarFunctionDerivative(const CallableType& c,
                                                 ArgumentsTypes&&... args)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -295,21 +295,21 @@ namespace tfel::math::enzyme::internals {
                    std::invoke_result_t<CallableType, ArgumentsTypes...>>)) {
     constexpr auto nargs = sizeof...(ArgumentsTypes);
     if constexpr (nargs == 1) {
-      return computeReverseModeScalarFunctionGradientImplementation(
+      return computeReverseModeScalarFunctionDerivativeImplementation(
           c, getArgumentsList<CallableType>(),
           std::forward<ArgumentsTypes>(args)...);
     } else if constexpr (nargs == 2) {
-      return computeReverseModeScalarFunctionGradientImplementation<idx...>(
+      return computeReverseModeScalarFunctionDerivativeImplementation<idx...>(
           c, getArgumentsList<CallableType>(),
           std::forward<ArgumentsTypes>(args)...);
     }
-  }  // end of computeReverseModeScalarFunctionGradient
+  }  // end of computeReverseModeScalarFunctionDerivative
 
   template <std::size_t idx,
             EnzymeCallableConcept CallableType,
             typename... CallableArgumentsTypes,
             typename... ArgumentsTypes>
-  auto computeReverseModeMathObjectFunctionGradient(
+  auto computeReverseModeMathObjectFunctionDerivative(
       const CallableType& c,
       const TypeList<CallableArgumentsTypes...>,
       ArgumentsTypes&&... args)  //
@@ -334,7 +334,7 @@ namespace tfel::math::enzyme::internals {
         auto result = c(wargs...);
         return result[i];
       };
-      const auto row = computeReverseModeGradient<idx>(wrapper, args...);
+      const auto row = computeReverseModeDerivative<idx>(wrapper, args...);
       if constexpr (ScalarConcept<decltype(row)>) {
         // derivation with respect to a scalar
         r[i] = row;
@@ -358,13 +358,13 @@ namespace tfel::math::enzyme::internals {
       }
     }
     return r;
-  }  // end of computeReverseModeMathObjectFunctionGradient
+  }  // end of computeReverseModeMathObjectFunctionDerivative
 
   template <std::size_t... idx,
             IsFunctionPointerConcept auto F,
             typename... CallableArgumentsTypes,
             typename... ArgumentsTypes>
-  auto computeReverseModeGradientImplementation(
+  auto computeReverseModeDerivativeImplementation(
       FunctionWrapper<F>,
       const TypeList<CallableArgumentsTypes...>&,
       ArgumentsTypes&&... args)  //
@@ -372,33 +372,33 @@ namespace tfel::math::enzyme::internals {
                 sizeof...(ArgumentsTypes)) &&
                (std::is_invocable_v<decltype(F), CallableArgumentsTypes...>)) {
     auto c = [](const CallableArgumentsTypes... wargs) { return F(wargs...); };
-    return ::tfel::math::enzyme::computeReverseModeGradient<idx...>(
+    return ::tfel::math::enzyme::computeReverseModeDerivative<idx...>(
         c, std::forward<ArgumentsTypes>(args)...);
-  }  // end of computeReverseModeGradientImplementation
+  }  // end of computeReverseModeDerivativeImplementation
 
   template <std::size_t... idx,
             EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeReverseModeGradientImplementation(
+  auto computeReverseModeDerivativeImplementation(
       const std::index_sequence<idx...>,
       const CallableType& c,
       ArgumentsTypes&&... arg)  //
       requires(std::is_invocable_v<CallableType, ArgumentsTypes...>) {
-    return ::tfel::math::enzyme::computeReverseModeGradient<idx...>(
+    return ::tfel::math::enzyme::computeReverseModeDerivative<idx...>(
         c, std::forward<ArgumentsTypes>(arg)...);
-  }  // end of computeReverseModeGradientImplementation
+  }  // end of computeReverseModeDerivativeImplementation
 
   template <std::size_t... idx,
             IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeReverseModeGradientImplementation(
+  auto computeReverseModeDerivativeImplementation(
       const std::index_sequence<idx...>,
       FunctionWrapper<F> f,
       ArgumentsTypes&&... arg)  //
       requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>) {
-    return ::tfel::math::enzyme::computeReverseModeGradient<idx...>(
+    return ::tfel::math::enzyme::computeReverseModeDerivative<idx...>(
         f, std::forward<ArgumentsTypes>(arg)...);
-  }  // end of computeReverseModeGradientImplementation
+  }  // end of computeReverseModeDerivativeImplementation
 
 }  // namespace tfel::math::enzyme::internals
 
@@ -407,7 +407,7 @@ namespace tfel::math::enzyme {
   template <std::size_t... idx,
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeReverseModeGradient(const CallableType& c,
+  auto computeReverseModeDerivative(const CallableType& c,
                                   ArgumentsTypes&&... args)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -420,22 +420,22 @@ namespace tfel::math::enzyme {
     using CallableResultType =
         std::invoke_result_t<CallableType, ArgumentsTypes...>;
     if constexpr (ScalarConcept<CallableResultType>) {
-      return internals::computeReverseModeScalarFunctionGradient<idx...>(
+      return internals::computeReverseModeScalarFunctionDerivative<idx...>(
           c, std::forward<ArgumentsTypes>(args)...);
     } else {
       static_assert(sizeof...(idx) == 1,
                     "callable returning a non-scalar value can't be "
                     "differentiated with respect to more than a variable");
-      return internals::computeReverseModeMathObjectFunctionGradient<idx...>(
+      return internals::computeReverseModeMathObjectFunctionDerivative<idx...>(
           c, internals::getArgumentsList<CallableType>(),
           std::forward<ArgumentsTypes>(args)...);
     }
-  }  // end of computeReverseModeGradient
+  }  // end of computeReverseModeDerivative
 
   template <std::size_t... idx,
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeReverseModeGradient(internals::FunctionWrapper<F> f,
+  auto computeReverseModeDerivative(internals::FunctionWrapper<F> f,
                                   ArgumentsTypes&&... args)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
@@ -445,35 +445,35 @@ namespace tfel::math::enzyme {
                (std::is_invocable_v<decltype(F), ArgumentsTypes...>)&&  //
                (VariableConcept<
                    std::invoke_result_t<decltype(F), ArgumentsTypes...>>)) {
-    return internals::computeReverseModeGradientImplementation<idx...>(
+    return internals::computeReverseModeDerivativeImplementation<idx...>(
         f, internals::getArgumentsList<decltype(F)>(),
         std::forward<ArgumentsTypes>(args)...);
-  }  // end of computeReverseModeGradient
+  }  // end of computeReverseModeDerivative
 
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeReverseModeGradient(const CallableType& c,
+  auto computeReverseModeDerivative(const CallableType& c,
                                   ArgumentsTypes&&... args)              //
       requires((std::is_invocable_v<CallableType, ArgumentsTypes...>)&&  //
                (VariableConcept<
                    std::invoke_result_t<CallableType, ArgumentsTypes...>>)) {
-    return internals::computeReverseModeGradientImplementation(
+    return internals::computeReverseModeDerivativeImplementation(
         std::make_index_sequence<sizeof...(ArgumentsTypes)>{}, c,
         std::forward<ArgumentsTypes>(args)...);
-  }  // end of computeReverseModeGradient
+  }  // end of computeReverseModeDerivative
 
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto computeReverseModeGradient(internals::FunctionWrapper<F> f,
+  auto computeReverseModeDerivative(internals::FunctionWrapper<F> f,
                                   ArgumentsTypes&&... args)             //
       requires((std::is_invocable_v<decltype(F), ArgumentsTypes...>)&&  //
                (VariableConcept<
                    std::invoke_result_t<decltype(F), ArgumentsTypes...>>)) {
-    return internals::computeReverseModeGradientImplementation(
+    return internals::computeReverseModeDerivativeImplementation(
         std::make_index_sequence<sizeof...(ArgumentsTypes)>{}, f,
         std::forward<ArgumentsTypes>(args)...);
-  }  // end of computeReverseModeGradient
+  }  // end of computeReverseModeDerivative
 
 }  // namespace tfel::math::enzyme
 
-#endif /* LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEGRADIENT_IXX */
+#endif /* LIB_TFEL_MATH_ENZYME_COMPUTEREVERSEMODEDERIVATIVE_IXX */

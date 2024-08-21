@@ -1,5 +1,5 @@
 /*!
- * \file   tests/getGradientFunction.cxx
+ * \file   tests/getDerivativeFunction.cxx
  * \brief
  * \author Thomas Helfer
  * \date   20/08/2024
@@ -12,17 +12,17 @@
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/st2tost2.hxx"
-#include "TFEL/Math/Enzyme/getGradientFunction.hxx"
+#include "TFEL/Math/Enzyme/getDerivativeFunction.hxx"
 #include "TFEL/Material/Lame.hxx"
 
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
-struct TFELMathEnzymeGetGradientFunction final : public tfel::tests::TestCase {
-  TFELMathEnzymeGetGradientFunction()
+struct TFELMathEnzymeGetDerivativeFunction final : public tfel::tests::TestCase {
+  TFELMathEnzymeGetDerivativeFunction()
       : tfel::tests::TestCase("TFEL/Math/Enzyme",
-                              "TFELMathEnzymeGetGradientFunction") {
+                              "TFELMathEnzymeGetDerivativeFunction") {
   }  // end of TFELMathEnzyme
   tfel::tests::TestResult execute() override {
     this->test1<tfel::math::enzyme::Mode::REVERSE>();
@@ -38,10 +38,10 @@ struct TFELMathEnzymeGetGradientFunction final : public tfel::tests::TestCase {
     constexpr auto eps = 1e-14;
     auto f = [](const double x) { return tfel::math::power<3>(x); };
     // first derivative
-    auto df = getGradientFunction<m, 0>(f);
+    auto df = getDerivativeFunction<m, 0>(f);
     TFEL_TESTS_ASSERT(std::abs(df(2) - 12) < eps);
     // second derivative
-    auto d2f = getGradientFunction<m, 0, 0>(f);
+    auto d2f = getDerivativeFunction<m, 0, 0>(f);
     TFEL_TESTS_ASSERT(std::abs(d2f(1) - 6) < eps);
   }
   template <tfel::math::enzyme::Mode m>
@@ -59,8 +59,8 @@ struct TFELMathEnzymeGetGradientFunction final : public tfel::tests::TestCase {
     const auto hooke_potential = [](const Stensor& e) {
       return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
     };
-    const auto stress = getGradientFunction<m, 0>(hooke_potential);
-    const auto stiffness = getGradientFunction<m, 0, 0>(hooke_potential);
+    const auto stress = getDerivativeFunction<m, 0>(hooke_potential);
+    const auto stiffness = getDerivativeFunction<m, 0, 0>(hooke_potential);
     const auto e = Stensor{0.01, 0, 0, 0};
     const auto s = stress(e);
     const auto s_ref = eval(2 * mu * e + lambda * trace(e) * Stensor::Id());
@@ -71,13 +71,13 @@ struct TFELMathEnzymeGetGradientFunction final : public tfel::tests::TestCase {
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(TFELMathEnzymeGetGradientFunction,
-                          "TFELMathEnzymeGetGradientFunction");
+TFEL_TESTS_GENERATE_PROXY(TFELMathEnzymeGetDerivativeFunction,
+                          "TFELMathEnzymeGetDerivativeFunction");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("tfel-math-enzyme-getGradientFunction.xml");
+  m.addXMLTestOutput("tfel-math-enzyme-getDerivativeFunction.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

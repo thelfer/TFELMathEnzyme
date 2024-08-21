@@ -1,6 +1,6 @@
 /*!
- * \file   TFEL/Math/Enzyme/computeForwardModeGradient.hxx
- * \brief  This file declares the computeForwardModeGradient function
+ * \file   TFEL/Math/Enzyme/computeForwardModeDerivative.hxx
+ * \brief  This file declares the computeForwardModeDerivative function
  * \author Thomas Helfer
  * \date   09/08/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEGRADIENT_HXX
-#define LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEGRADIENT_HXX
+#ifndef LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEDERIVATIVE_HXX
+#define LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEDERIVATIVE_HXX
 
 #include "TFEL/Math/Enzyme/fwddiff.hxx"
 
@@ -21,11 +21,11 @@ namespace tfel::math::enzyme {
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto
-  computeForwardModeGradient(const CallableType&, ArgumentsTypes&&...) requires(
+  computeForwardModeDerivative(const CallableType&, ArgumentsTypes&&...) requires(
       std::is_invocable_v<CallableType, ArgumentsTypes...>);
 
 }  // end of namespace tfel::math::enzyme
 
-#include "TFEL/Math/Enzyme/computeForwardModeGradient.ixx"
+#include "TFEL/Math/Enzyme/computeForwardModeDerivative.ixx"
 
-#endif /* LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEGRADIENT_IXX */
+#endif /* LIB_TFEL_MATH_ENZYME_COMPUTEFORWARDMODEDERIVATIVE_IXX */

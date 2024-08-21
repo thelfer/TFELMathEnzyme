@@ -1,5 +1,5 @@
 /*!
- * \file   tests/computeReverseModeGradient.cxx
+ * \file   tests/computeReverseModeDerivative.cxx
  * \brief
  * \author Thomas Helfer
  * \date   20/08/2024
@@ -17,7 +17,7 @@
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
 #include "TFEL/Material/Lame.hxx"
-#include "TFEL/Math/Enzyme/computeReverseModeGradient.hxx"
+#include "TFEL/Math/Enzyme/computeReverseModeDerivative.hxx"
 
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
@@ -47,11 +47,11 @@ static tfel::math::stensor<2u, double> deviator(
   return ::tfel::math::deviator(s);
 }  // end of deviator
 
-struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
-  TFELMathEnzymeComputeGradient()
+struct TFELMathEnzymeComputeDerivative final : public tfel::tests::TestCase {
+  TFELMathEnzymeComputeDerivative()
       : tfel::tests::TestCase("TFEL/Math/Enzyme",
-                              "TFELMathEnzymeComputeGradient") {
-  }  // end of TFELMathEnzymeComputeGradient
+                              "TFELMathEnzymeComputeDerivative") {
+  }  // end of TFELMathEnzymeComputeDerivative
   tfel::tests::TestResult execute() override {
     using namespace tfel::math;
     this->test1();
@@ -71,35 +71,35 @@ struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
     constexpr auto a = double{2.3};
     const auto v = double{1};
     const auto c = [](const double x) { return std::cos(x); };
-    TFEL_TESTS_ASSERT(std::abs(computeReverseModeGradient(c, v) + std::sin(v)) <
+    TFEL_TESTS_ASSERT(std::abs(computeReverseModeDerivative(c, v) + std::sin(v)) <
                       eps);
     TFEL_TESTS_ASSERT(
-        std::abs(computeReverseModeGradient<0>(c, v) + std::sin(v)) < eps);
+        std::abs(computeReverseModeDerivative<0>(c, v) + std::sin(v)) < eps);
     const auto c2 = [](const double x) { return a * std::sin(x); };
-    const auto dc2_dx = computeReverseModeGradient(c2, v);
+    const auto dc2_dx = computeReverseModeDerivative(c2, v);
     const auto c3 = [&c](const double x) {
-      return computeReverseModeGradient(c, x);
+      return computeReverseModeDerivative(c, x);
     };
-    const auto dc3_dx = computeReverseModeGradient(c3, v);
+    const auto dc3_dx = computeReverseModeDerivative(c3, v);
     TFEL_TESTS_ASSERT(std::abs(dc3_dx + std::cos(v)) < eps);
     TFEL_TESTS_ASSERT(std::abs(dc2_dx - a * std::cos(v)) < eps);
     TFEL_TESTS_ASSERT(
-        std::abs(computeReverseModeGradient(function<f>, 2) - 12) < eps);
+        std::abs(computeReverseModeDerivative(function<f>, 2) - 12) < eps);
     TFEL_TESTS_ASSERT(
-        std::abs(computeReverseModeGradient<0>(function<f>, 2) - 12) < eps);
+        std::abs(computeReverseModeDerivative<0>(function<f>, 2) - 12) < eps);
     TFEL_TESTS_ASSERT(
-        std::abs(computeReverseModeGradient<0>(function<f2>, 2, 1) - 1) < eps);
+        std::abs(computeReverseModeDerivative<0>(function<f2>, 2, 1) - 1) < eps);
     TFEL_TESTS_ASSERT(
-        std::abs(computeReverseModeGradient<1>(function<f2>, 2, 1) - 2) < eps);
+        std::abs(computeReverseModeDerivative<1>(function<f2>, 2, 1) - 2) < eps);
     const auto [df_dx, df_dy] =
-        computeReverseModeGradient<0, 1>(function<f2>, 2, 1);
+        computeReverseModeDerivative<0, 1>(function<f2>, 2, 1);
     TFEL_TESTS_ASSERT(std::abs(df_dx - 1) < eps);
     TFEL_TESTS_ASSERT(std::abs(df_dy - 2) < eps);
   }
   void test2() {
     using namespace tfel::math::enzyme;
     constexpr auto eps = double{1e-14};
-    const auto [df_dx, df_dy] = computeReverseModeGradient(function<f3>, 3, 2);
+    const auto [df_dx, df_dy] = computeReverseModeDerivative(function<f3>, 3, 2);
     TFEL_TESTS_ASSERT(std::abs(df_dx - 2) < eps);
     TFEL_TESTS_ASSERT(std::abs(df_dy - 2.75) < eps);
   }
@@ -108,12 +108,12 @@ struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
     using namespace tfel::math::enzyme;
     constexpr auto eps = double{1e-14};
     constexpr auto id = stensor<2u, double>::Id();
-    const auto r = computeReverseModeGradient(function<my_trace>, id);
+    const auto r = computeReverseModeDerivative(function<my_trace>, id);
     TFEL_TESTS_ASSERT(abs(r - id) < eps);
-    const auto r2 = computeReverseModeGradient(function<my_trace2>, id);
+    const auto r2 = computeReverseModeDerivative(function<my_trace2>, id);
     TFEL_TESTS_ASSERT(abs(r2 - id) < eps);
     TFEL_TESTS_ASSERT(
-        abs(computeReverseModeGradient(function<mult_by_2<1>>, id) -
+        abs(computeReverseModeDerivative(function<mult_by_2<1>>, id) -
             stensor<2, double>{0, 2, 0, 0}) < eps);
   }
   void test4() {
@@ -122,7 +122,7 @@ struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
     constexpr auto eps = double{1e-14};
     constexpr auto id = stensor<2u, double>::Id();
     constexpr auto K = st2tost2<2u, double>::K();
-    const auto r = computeReverseModeGradient(function<::deviator>, id);
+    const auto r = computeReverseModeDerivative(function<::deviator>, id);
     TFEL_TESTS_ASSERT(abs(r - K) < eps);
   }
   template <tfel::math::stensor_common::EigenSolver esolver>
@@ -136,7 +136,7 @@ struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
       const auto vp = v.computeEigenValues<esolver>();
       return vp(0);
     };
-    const auto dvp = computeReverseModeGradient(first_eigen_value, s);
+    const auto dvp = computeReverseModeDerivative(first_eigen_value, s);
     const auto [vp, m] = s.computeEigenVectors<esolver>();
     const auto [n0, n1, n2] = Stensor::computeEigenTensors(m);
     TFEL_TESTS_ASSERT(abs(dvp - n0) < eps);
@@ -159,10 +159,10 @@ struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
       return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
     };
     const auto stress = [hooke_potential](const Stensor& e) {
-      return computeReverseModeGradient(hooke_potential, e);
+      return computeReverseModeDerivative(hooke_potential, e);
     };
     const auto stiffness = [stress](const Stensor& e) {
-      return computeReverseModeGradient(stress, e);
+      return computeReverseModeDerivative(stress, e);
     };
     const auto e = Stensor{0.01, 0, 0, 0, 0, 0};
     const auto K = stiffness(e);
@@ -184,10 +184,10 @@ struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
       return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
     };
     const auto stress = [hooke_potential](const Stensor& e) {
-      return computeReverseModeGradient(hooke_potential, e);
+      return computeReverseModeDerivative(hooke_potential, e);
     };
     const auto stiffness = [stress](const Stensor& e) {
-      return computeReverseModeGradient(stress, e);
+      return computeReverseModeDerivative(stress, e);
     };
     const auto e = Stensor{0.01, 0, 0, 0, 0, 0};
     const auto K = stiffness(e);
@@ -197,13 +197,13 @@ struct TFELMathEnzymeComputeGradient final : public tfel::tests::TestCase {
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(TFELMathEnzymeComputeGradient,
-                          "TFELMathEnzymeComputeGradient");
+TFEL_TESTS_GENERATE_PROXY(TFELMathEnzymeComputeDerivative,
+                          "TFELMathEnzymeComputeDerivative");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("tfel-math-enzyme-computeReverseModeGradient.xml");
+  m.addXMLTestOutput("tfel-math-enzyme-computeReverseModeDerivative.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
