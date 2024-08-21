@@ -36,6 +36,7 @@ jobs:
         make
         make install
         cat /home/runner/work/TFELMathEnzyme/TFELMathEnzyme/enzyme/lib/cmake/Enzyme/EnzymeTargets.cmake
+        cmake --version
     #     spack install tfel@master%clang@18.1.8~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     # - name: cmake
     #   shell: spack-sh {0}
