@@ -26,6 +26,7 @@ jobs:
       run: |
         sudo apt install llvm-dev
         spack external find llvm
+        sed -i 's|prefix: /usr|prefix: /usr/lib/llvm-14/|g' ~/.spack/packages.yaml
         spack install enzyme
         spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
