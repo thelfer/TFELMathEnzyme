@@ -24,7 +24,9 @@ jobs:
     - name: Install TFEL and Enzyme
       shell: spack-sh {0}
       run: |
-        sudo apt install enzyme
+        sudo apt install llvm
+        spack external find llvm
+        spack install enzyme
         spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
       shell: spack-sh {0}
