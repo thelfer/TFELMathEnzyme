@@ -24,23 +24,26 @@ jobs:
     - name: Install TFEL and Enzyme
       shell: spack-sh {0}
       run: |
-        sudo apt install llvm-dev
+	wget https://apt.llvm.org/llvm.sh
+	chmod +x llvm.sh
+	sudo ./llvm.sh 18
         spack external find llvm
-        sed -i 's|prefix: /usr|prefix: /usr/lib/llvm-14/|g' /home/runner/work/TFELMathEnzyme/TFELMathEnzyme/spack/etc/spack/packages.yaml
-        spack install enzyme
-        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+	spack compiler find
+        sed -i 's|prefix: /usr|prefix: /usr/lib/llvm-18/|g' /home/runner/work/TFELMathEnzyme/TFELMathEnzyme/spack/etc/spack/packages.yaml
+        spack install enzyme%clang@18.1.8
+        spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea%clang@18.1.8
     - name: cmake
       shell: spack-sh {0}
       run: |
-        spack load tfel
+        spack load tfel enzyme
         cmake -DCMAKE_BUILD_TYPE=Release .
     - name: make
       shell: spack-sh {0}
       run: |
-        spack load tfel
+        spack load tfel enzyme
         make
-    - name: make check
+    - name: ctest
       shell: spack-sh {0}
       run: |
-        spack load tfel
+        spack load tfel enzyme
         ctest
