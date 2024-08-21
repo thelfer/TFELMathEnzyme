@@ -24,7 +24,7 @@ jobs:
     - name: Install TFEL and Enzyme
       shell: spack-sh {0}
       run: |
-      	apt install cmake
+        apt install cmake
         which cmake
     #     wget https://apt.llvm.org/llvm.sh
     #     chmod +x llvm.sh
