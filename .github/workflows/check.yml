@@ -29,11 +29,11 @@ jobs:
         sudo ./llvm.sh 18
         spack compiler find
         git clone https://github.com/EnzymeAD/Enzyme
-	mkdir build-enzyme
-	cd build-enzyme
-	cmake ../Enzyme/enzyme -DLLVM_DIR=/usr/lib/llvm-18 -DCMAKE_BUID_TYPE=Release -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/enzyme
-	make
-	make install
+        mkdir build-enzyme
+        cd build-enzyme
+        cmake ../Enzyme/enzyme -DLLVM_DIR=/usr/lib/llvm-18 -DCMAKE_BUID_TYPE=Release -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/enzyme
+        make
+        make install
         spack install tfel@master%clang@18.1.8~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
       shell: spack-sh {0}
