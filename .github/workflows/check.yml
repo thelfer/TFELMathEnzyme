@@ -28,7 +28,7 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh 18
         spack compiler find
-        spack compiler find
+        spack compiler list
         git clone https://github.com/EnzymeAD/Enzyme
         mkdir build-enzyme
         cd build-enzyme
