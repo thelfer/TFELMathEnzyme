@@ -19,9 +19,9 @@ namespace tfel::math::enzyme {
    * to which a callable object can be differentiated.
    */
   template <typename VariableType>
-  concept VariableConcept =
-      (!internals::isTemporary<VariableType>()) &&
-      ((ScalarConcept<VariableType>) || (MathObjectConcept<VariableType>));
+  concept VariableConcept = (!internals::isTemporary<VariableType>()) &&
+                            ((ScalarConcept<VariableType>) ||
+                             (MathObjectConcept<VariableType>));
 
   /*!
    * \brief a simple structure containing the value of a variable and its
@@ -38,9 +38,10 @@ namespace tfel::math::enzyme {
    * `VariableValueAndIncrement`
    */
   template <typename VariableType, typename ValueType, typename IncrementType>
-  VariableValueAndIncrement<VariableType> make_vdv(ValueType&&, IncrementType&&)
-    requires((std::is_convertible_v<ValueType, VariableType>) &&
-             (std::is_convertible_v<IncrementType, VariableType>));
+  VariableValueAndIncrement<VariableType>
+  make_vdv(ValueType&&, IncrementType&&) requires(
+      (std::is_convertible_v<ValueType, VariableType>)&&(
+          std::is_convertible_v<IncrementType, VariableType>));
 
 }  // end of namespace tfel::math::enzyme
 

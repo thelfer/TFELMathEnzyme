@@ -11,11 +11,10 @@
 namespace tfel::math::enzyme {
 
   template <typename VariableType, typename ValueType, typename IncrementType>
-  VariableValueAndIncrement<VariableType> make_vdv(ValueType&& value,
-                                                   IncrementType&& increment)
-    requires((std::is_convertible_v<ValueType, VariableType>) &&
-             (std::is_convertible_v<IncrementType, VariableType>))
-  {
+  VariableValueAndIncrement<VariableType>
+  make_vdv(ValueType&& value, IncrementType&& increment) requires(
+      (std::is_convertible_v<ValueType, VariableType>)&&(
+          std::is_convertible_v<IncrementType, VariableType>)) {
     return {.value = static_cast<VariableType>(value),
             .increment = static_cast<VariableType>(increment)};
   }  // end of make_dvd

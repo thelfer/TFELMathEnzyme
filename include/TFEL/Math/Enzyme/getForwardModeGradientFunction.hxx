@@ -19,8 +19,8 @@
 namespace tfel::math::enzyme {
 
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
-  auto getForwardModeGradientFunction(const CallableType&)
-    requires(sizeof...(Ns) > 0);
+  auto getForwardModeGradientFunction(const CallableType&) requires(
+      sizeof...(Ns) > 0);
 
 }  // end of namespace tfel::math::enzyme
 

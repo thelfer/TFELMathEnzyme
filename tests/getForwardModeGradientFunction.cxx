@@ -22,7 +22,8 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
-struct TFELMathEnzymeGetForwardModeGradientFunction final : public tfel::tests::TestCase {
+struct TFELMathEnzymeGetForwardModeGradientFunction final
+    : public tfel::tests::TestCase {
   TFELMathEnzymeGetForwardModeGradientFunction()
       : tfel::tests::TestCase("TFEL/Math/Enzyme",
                               "TFELMathEnzymeGetForwardModeGradientFunction") {

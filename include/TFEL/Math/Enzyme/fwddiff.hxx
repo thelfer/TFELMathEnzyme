@@ -31,9 +31,9 @@ namespace tfel::math::enzyme {
    */
   template <internals::EnzymeCallableConcept CallableType,
             typename ArgumentType0>
-  auto fwddiff(const CallableType&, ArgumentType0&&)
-    requires((internals::isVariableValueAndIncrement<ArgumentType0>()) &&
-             (internals::getArgumentsSize<CallableType>() == 1u));
+  auto fwddiff(const CallableType&, ArgumentType0&&) requires(
+      (internals::isVariableValueAndIncrement<ArgumentType0>()) &&
+      (internals::getArgumentsSize<CallableType>() == 1u));
 
   /*!
    * \brief compute the increment of a callable given the values the variables
@@ -50,8 +50,8 @@ namespace tfel::math::enzyme {
   template <internals::EnzymeCallableConcept CallableType,
             typename ArgumentType0,
             typename ArgumentType1>
-  auto fwddiff(const CallableType&, ArgumentType0&&, ArgumentType1&&)
-    requires((internals::getArgumentsSize<CallableType>() == 2u));
+  auto fwddiff(const CallableType&, ArgumentType0&&, ArgumentType1&&) requires(
+      (internals::getArgumentsSize<CallableType>() == 2u));
 
   /*!
    * \brief compute the increment of a callable given the values the variables
@@ -71,11 +71,12 @@ namespace tfel::math::enzyme {
             typename ArgumentType0,
             typename ArgumentType1,
             typename ArgumentType2>
-  auto fwddiff(const CallableType&,
-               ArgumentType0&&,
-               ArgumentType1&&,
-               ArgumentType2&&)
-    requires((internals::getArgumentsSize<CallableType>() == 3u));
+  auto fwddiff(
+      const CallableType&,
+      ArgumentType0&&,
+      ArgumentType1&&,
+      ArgumentType2&&) requires((internals::getArgumentsSize<CallableType>() ==
+                                 3u));
 
   /*!
    * \brief compute the increment of a callable given the values the variables
@@ -98,12 +99,13 @@ namespace tfel::math::enzyme {
             typename ArgumentType1,
             typename ArgumentType2,
             typename ArgumentType3>
-  auto fwddiff(const CallableType&,
-               ArgumentType0&&,
-               ArgumentType1&&,
-               ArgumentType2&&,
-               ArgumentType3&&)
-    requires((internals::getArgumentsSize<CallableType>() == 4u));
+  auto fwddiff(
+      const CallableType&,
+      ArgumentType0&&,
+      ArgumentType1&&,
+      ArgumentType2&&,
+      ArgumentType3&&) requires((internals::getArgumentsSize<CallableType>() ==
+                                 4u));
 
   /*!
    * \brief helper function to compute the differential of a regular function.
@@ -115,7 +117,7 @@ namespace tfel::math::enzyme {
             typename... ArgumentsTypes>
   auto fwddiff(internals::FunctionWrapper<F>,
                ArgumentsTypes&&...)  //
-    requires(sizeof...(ArgumentsTypes) > 0);
+      requires(sizeof...(ArgumentsTypes) > 0);
 
 }  // end of namespace tfel::math::enzyme
 

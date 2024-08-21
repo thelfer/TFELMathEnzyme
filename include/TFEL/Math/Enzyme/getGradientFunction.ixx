@@ -30,11 +30,10 @@ namespace tfel::math::enzyme {
     }
   }
 
-  template <std::size_t... Ns,
-            internals::EnzymeCallableConcept CallableType>
+  template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
   auto getGradientFunction(const CallableType& c) {
     return getGradientFunction<Mode::REVERSE, Ns...>(c);
-  } // end of getGradientFunction
+  }  // end of getGradientFunction
 
 }  // end of namespace tfel::math::enzyme
 

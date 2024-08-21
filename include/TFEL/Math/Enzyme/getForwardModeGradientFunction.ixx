@@ -21,9 +21,8 @@ namespace tfel::math::enzyme::internals {
             internals::EnzymeCallableConcept CallableType,
             typename CallableArgumentType0>
   auto getForwardModeGradientFunctionImplementation(
-      const CallableType& c, const TypeList<CallableArgumentType0> args_list)
-    requires(N == 0)
-  {
+      const CallableType& c,
+      const TypeList<CallableArgumentType0> args_list) requires(N == 0) {
     auto dc = [c](CallableArgumentType0 warg) {
       return ::tfel::math::enzyme::computeForwardModeGradient(c, warg);
     };
@@ -39,9 +38,8 @@ namespace tfel::math::enzyme::internals {
 namespace tfel::math::enzyme {
 
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
-  auto getForwardModeGradientFunction(const CallableType& c)
-    requires(sizeof...(Ns) > 0)
-  {
+  auto getForwardModeGradientFunction(const CallableType& c) requires(
+      sizeof...(Ns) > 0) {
     return internals::getForwardModeGradientFunctionImplementation<Ns...>(
         c, internals::getArgumentsList<CallableType>());
   }  // end of getForwardModeGradientFunction

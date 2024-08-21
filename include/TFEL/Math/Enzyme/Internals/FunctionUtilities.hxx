@@ -97,9 +97,9 @@ namespace tfel::math::enzyme::internals {
    * the symbol associated with the function is not seen by Enzyme.
    */
   template <typename CallableType>
-  concept EnzymeCallableConcept =
-      (!isFunction<CallableType>()) && (!isFunctionPointer<CallableType>()) &&
-      (hasCallOperator<CallableType>());
+  concept EnzymeCallableConcept = (!isFunction<CallableType>()) &&
+                                  (!isFunctionPointer<CallableType>()) &&
+                                  (hasCallOperator<CallableType>());
 
 }  // end of namespace tfel::math::enzyme::internals
 

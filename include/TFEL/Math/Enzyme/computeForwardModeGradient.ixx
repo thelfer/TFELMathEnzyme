@@ -24,9 +24,8 @@ namespace tfel::math::enzyme::internals {
   auto computeForwardModeGradientImplementation(
       const CallableType& c,
       const TypeList<CallableArgumentType0>&,
-      ArgumentType0&& arg0)
-    requires(std::is_invocable_v<CallableType, ArgumentType0>)
-  {
+      ArgumentType0&&
+          arg0) requires(std::is_invocable_v<CallableType, ArgumentType0>) {
     using ResultType =
         std::invoke_result_t<CallableType, CallableArgumentType0>;
     using DerivativeResultType =
@@ -72,10 +71,12 @@ namespace tfel::math::enzyme {
 
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto computeForwardModeGradient(const CallableType& c,
-                                  ArgumentsTypes&&... args)
-    requires(std::is_invocable_v<CallableType, ArgumentsTypes...>)
-  {
+  auto computeForwardModeGradient(
+      const CallableType& c,
+      ArgumentsTypes&&... args) requires(std::
+                                             is_invocable_v<
+                                                 CallableType,
+                                                 ArgumentsTypes...>) {
     static_assert(sizeof...(ArgumentsTypes) == 1,
                   "only callable of one variable are supported");
     return internals::computeForwardModeGradientImplementation(
