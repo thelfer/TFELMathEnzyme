@@ -24,11 +24,11 @@ jobs:
     - name: Install TFEL and Enzyme
       shell: spack-sh {0}
       run: |
-	wget https://apt.llvm.org/llvm.sh
-	chmod +x llvm.sh
-	sudo ./llvm.sh 18
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 18
         spack external find llvm
-	spack compiler find
+        spack compiler find
         sed -i 's|prefix: /usr|prefix: /usr/lib/llvm-18/|g' /home/runner/work/TFELMathEnzyme/TFELMathEnzyme/spack/etc/spack/packages.yaml
         spack install enzyme%clang@18.1.8
         spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea%clang@18.1.8
