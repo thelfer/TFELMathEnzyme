@@ -24,21 +24,20 @@ jobs:
     - name: Install TFEL and Enzyme
       shell: spack-sh {0}
       run: |
-        spack install enzyme
+        sudo apt install enzyme
         spack install tfel@master~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
     - name: cmake
       shell: spack-sh {0}
       run: |
-        spack load enzyme
         spack load tfel
         cmake -DCMAKE_BUILD_TYPE=Release .
     - name: make
       shell: spack-sh {0}
       run: |
-        spack load enzyme tfel
+        spack load tfel
         make
     - name: make check
       shell: spack-sh {0}
       run: |
-        spack load enzyme tfel
+        spack load tfel
         ctest
