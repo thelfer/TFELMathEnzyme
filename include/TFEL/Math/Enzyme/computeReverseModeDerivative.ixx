@@ -40,22 +40,22 @@ namespace tfel::math::enzyme {
       : internals::PackedDerivativesImplementation<0, DerivativesTypes...> {};
 
   template <std::size_t N, typename... DerivativesTypes>
-  auto& get(PackedDerivatives<DerivativesTypes...>& gradients) noexcept  //
+  auto& get(PackedDerivatives<DerivativesTypes...>& derivatives) noexcept  //
       requires(N < sizeof...(DerivativesTypes)) {
     using DerivativeType =
         std::tuple_element_t<N, std::tuple<DerivativesTypes...>>;
-    return static_cast<internals::DerivativeHolder<N, DerivativeType>&>(gradients)
+    return static_cast<internals::DerivativeHolder<N, DerivativeType>&>(derivatives)
         .value;
   }  // end of get
 
   template <std::size_t N, typename... DerivativesTypes>
   const auto& get(
-      const PackedDerivatives<DerivativesTypes...>& gradients) noexcept  //
+      const PackedDerivatives<DerivativesTypes...>& derivatives) noexcept  //
       requires(N < sizeof...(DerivativesTypes)) {
     using DerivativeType =
         std::tuple_element_t<N, std::tuple<DerivativesTypes...>>;
     return static_cast<const internals::DerivativeHolder<N, DerivativeType>&>(
-               gradients)
+               derivatives)
         .value;
   }  // end of get
 

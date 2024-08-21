@@ -16,9 +16,9 @@
 namespace tfel::math::enzyme {
 
   /*!
-   * \brief compute the gradient of a callable with respect to the variables
+   * \brief compute the derivative of a callable with respect to the variables
    * designated by the indices `idx`
-   * \tparam idx: indices of the variables with respect to which the gradients
+   * \tparam idx: indices of the variables with respect to which the derivatives
    * are computed. \tparam CallableType: type of the callable \tparam
    * ArgumentsTypes: types of the arguments passed to the callable \param[in] c:
    * callable \param[in] args: arguments passed to the callable
@@ -37,7 +37,7 @@ namespace tfel::math::enzyme {
                (VariableConcept<
                    std::invoke_result_t<CallableType, ArgumentsTypes...>>));
   /*!
-   * \brief compute the gradient of a callable with respect to all the
+   * \brief compute the derivative of a callable with respect to all the
    * variables. \tparam CallableType: type of the callable \tparam
    * ArgumentsTypes: types of the arguments passed to the callable \param[in] c:
    * callable \param[in] args: arguments passed to the callable
@@ -50,10 +50,10 @@ namespace tfel::math::enzyme {
                (VariableConcept<
                    std::invoke_result_t<CallableType, ArgumentsTypes...>>));
   /*!
-   * \brief compute the gradient of a free function with respect to the
+   * \brief compute the derivative of a free function with respect to the
    * variables designated by the indices `idx`.
    * \tparam idx: indices of the
-   * variables with respect to which the gradients are computed. \tparam F:
+   * variables with respect to which the derivatives are computed. \tparam F:
    * pointer to the free function \tparam ArgumentsTypes: types of the arguments
    * passed to the free function \param[in] f: free function warpper \param[in]
    * args: arguments passed to the free function
@@ -72,7 +72,7 @@ namespace tfel::math::enzyme {
                (VariableConcept<
                    std::invoke_result_t<decltype(F), ArgumentsTypes...>>));
   /*!
-   * \brief compute the gradient of a free function with respect to all
+   * \brief compute the derivative of a free function with respect to all
    * variables \tparam F: pointer to the free function \tparam ArgumentsTypes:
    * types of the arguments passed to the free function \param[in] f: free
    * function warpper \param[in] args: arguments passed to the free function
