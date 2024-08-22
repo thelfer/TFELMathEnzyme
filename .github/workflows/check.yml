@@ -40,7 +40,7 @@ jobs:
       shell: spack-sh {0}
       run: |
         spack load tfel
-        cmake -DCMAKE_BUILD_TYPE=Release . -DTFEL_DIR=`spack location -i tfel` -DEnzyme_DIR=${{github.workspace}}/enzyme
+        CXXLFAGS="-O2 -Wall -W -pendantic" cmake -DCMAKE_BUILD_TYPE=Release . -DTFEL_DIR=`spack location -i tfel` -DEnzyme_DIR=${{github.workspace}}/enzyme
     - name: make       
       shell: spack-sh {0}
       run: |
