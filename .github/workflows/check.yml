@@ -29,29 +29,25 @@ jobs:
         sudo ./llvm.sh 18
         sudo apt install libclang-18-dev
         spack compiler find
-        spack compiler list
         git clone https://github.com/EnzymeAD/Enzyme
         mkdir build-enzyme
         cd build-enzyme
         cmake ../Enzyme/enzyme -DLLVM_DIR=/usr/lib/llvm-18 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/enzyme
         make
         make install
-        ls ${{github.workspace}}/enzyme
-        ls ${{github.workspace}}/enzyme/lib
-        cat /home/runner/work/TFELMathEnzyme/TFELMathEnzyme/enzyme/lib/cmake/Enzyme/EnzymeTargets.cmake
-    #     spack install tfel@master%clang@18.1.8~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
-    # - name: cmake
-    #   shell: spack-sh {0}
-    #   run: |
-    #     spack load tfel
-    #     cmake -DCMAKE_BUILD_TYPE=Release . -DTFEL_DIR=`spack location -i tfel` -DEnzyme_DIR=${{github.workspace}}/enzyme -DTFEL_MATH_ENZYME_ENZYME_FLAGS="-fplugin=${{github.workspace}}/enzyme/lib/ClangEnzyme-18.so"
-    # - name: make       
-    #   shell: spack-sh {0}
-    #   run: |
-    #     spack load tfel
-    #     make
-    # - name: ctest
-    #   shell: spack-sh {0}
-    #   run: |
-    #     spack load tfel
-    #     ctest
+        spack install tfel@master%clang@18.1.8~python~python_bindings~aster~fortran~abaqus~calculix~ansys~europlexus~cyrano~lsdyna~comsol~diana-fea
+    - name: cmake
+      shell: spack-sh {0}
+      run: |
+        spack load tfel
+        cmake -DCMAKE_BUILD_TYPE=Release . -DTFEL_DIR=`spack location -i tfel` -DEnzyme_DIR=${{github.workspace}}/enzyme
+    - name: make       
+      shell: spack-sh {0}
+      run: |
+        spack load tfel
+        make
+    - name: ctest
+      shell: spack-sh {0}
+      run: |
+        spack load tfel
+        ctest
