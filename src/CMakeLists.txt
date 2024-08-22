@@ -12,6 +12,6 @@ else(NOT TFEL_MATH_ENZYME_ENZYME_FLAGS)
   # on the runner of the github action
   target_link_libraries(TFELMathEnzyme INTERFACE
                         tfel::TFELMath)
-  target_compile_options(TFELMathEnzyme PUBLIC
+  target_compile_options(TFELMathEnzyme INTERFACE
                         ${TFEL_MATH_ENZYME_ENZYME_FLAGS})
 endif(NOT TFEL_MATH_ENZYME_ENZYME_FLAGS)
