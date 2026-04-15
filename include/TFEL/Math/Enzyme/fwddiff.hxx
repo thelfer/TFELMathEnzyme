@@ -21,91 +21,17 @@
 namespace tfel::math::enzyme {
 
   /*!
-   * \brief compute the increment of a callable given the values of the variable
-   * and its increment.
-   * \tparam CallableType: type of the callable
-   * \tparam ArgumentType0: type of the argument
-   * \param[in] c: callable
-   * \param[in] arg0: argument containing both the value of the variable and its
-   * increment \return the callable increment
+   * \brief compute the increment of a callable given the values of some
+   * variables and theirs increments and the values of the other. \tparam
+   * CallableType: type of the callable \tparam ArgumentsTypes: type of the
+   * arguments passed. \param[in] c: callable \param[in] args: arguments \return
+   * the callable increment
    */
   template <internals::EnzymeCallableConcept CallableType,
-            typename ArgumentType0>
-  auto fwddiff(const CallableType&, ArgumentType0&&) requires(
-      (internals::isVariableValueAndIncrement<ArgumentType0>()) &&
-      (internals::getArgumentsSize<CallableType>() == 1u));
-
-  /*!
-   * \brief compute the increment of a callable given the values the variables
-   * and the increment of one of these variables.
-   * \tparam CallableType: type of the callable
-   * \tparam ArgumentType0: type of the first argument
-   * \tparam ArgumentType1: type of the second argument
-   * \param[in] c: callable
-   * \param[in] arg0: first argument
-   * \param[in] arg1: second argument
-   * \return the callable increment
-   * \note One and only one argument must be a VariableValueAndIncrement object.
-   */
-  template <internals::EnzymeCallableConcept CallableType,
-            typename ArgumentType0,
-            typename ArgumentType1>
-  auto fwddiff(const CallableType&, ArgumentType0&&, ArgumentType1&&) requires(
-      (internals::getArgumentsSize<CallableType>() == 2u));
-
-  /*!
-   * \brief compute the increment of a callable given the values the variables
-   * and the increment of one of these variables.
-   * \tparam CallableType: type of the callable
-   * \tparam ArgumentType0: type of the first argument
-   * \tparam ArgumentType1: type of the second argument
-   * \tparam ArgumentType2: type of the third argument
-   * \param[in] c: callable
-   * \param[in] arg0: first argument
-   * \param[in] arg1: second argument
-   * \param[in] arg2: third argument
-   * \return the callable increment
-   * \note One and only one argument must be a VariableValueAndIncrement object.
-   */
-  template <internals::EnzymeCallableConcept CallableType,
-            typename ArgumentType0,
-            typename ArgumentType1,
-            typename ArgumentType2>
-  auto fwddiff(
-      const CallableType&,
-      ArgumentType0&&,
-      ArgumentType1&&,
-      ArgumentType2&&) requires((internals::getArgumentsSize<CallableType>() ==
-                                 3u));
-
-  /*!
-   * \brief compute the increment of a callable given the values the variables
-   * and the increment of one of these variables.
-   * \tparam CallableType: type of the callable
-   * \tparam ArgumentType0: type of the first argument
-   * \tparam ArgumentType1: type of the second argument
-   * \tparam ArgumentType2: type of the third argument
-   * \tparam ArgumentType3: type of the fourth argument
-   * \param[in] c: callable
-   * \param[in] arg0: first argument
-   * \param[in] arg1: second argument
-   * \param[in] arg2: third argument
-   * \param[in] arg3: fourth argument
-   * \return the callable increment
-   * \note One and only one argument must be a VariableValueAndIncrement object.
-   */
-  template <internals::EnzymeCallableConcept CallableType,
-            typename ArgumentType0,
-            typename ArgumentType1,
-            typename ArgumentType2,
-            typename ArgumentType3>
-  auto fwddiff(
-      const CallableType&,
-      ArgumentType0&&,
-      ArgumentType1&&,
-      ArgumentType2&&,
-      ArgumentType3&&) requires((internals::getArgumentsSize<CallableType>() ==
-                                 4u));
+            typename... ArgumentsTypes>
+  auto fwddiff(CallableType&&, ArgumentsTypes&&...) requires(
+      internals::countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() >
+      0);
 
   /*!
    * \brief helper function to compute the differential of a regular function.
@@ -115,9 +41,9 @@ namespace tfel::math::enzyme {
    */
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto fwddiff(internals::FunctionWrapper<F>,
-               ArgumentsTypes&&...)  //
-      requires(sizeof...(ArgumentsTypes) > 0);
+  auto fwddiff(internals::FunctionWrapper<F>, ArgumentsTypes&&...) requires(
+      internals::countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() >
+      0);
 
 }  // end of namespace tfel::math::enzyme
 

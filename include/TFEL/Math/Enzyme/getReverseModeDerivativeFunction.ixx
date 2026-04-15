@@ -29,7 +29,8 @@ namespace tfel::math::enzyme::internals {
     if constexpr (sizeof...(Ns) == 0) {
       return dc;
     } else {
-      return getReverseModeDerivativeFunctionImplementation<Ns...>(dc, args_list);
+      return getReverseModeDerivativeFunctionImplementation<Ns...>(dc,
+                                                                   args_list);
     }
   }  // end of getReverseModeDerivativeFunctionImplementation
 

@@ -19,7 +19,8 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
-struct TFELMathEnzymeGetDerivativeFunction final : public tfel::tests::TestCase {
+struct TFELMathEnzymeGetDerivativeFunction final
+    : public tfel::tests::TestCase {
   TFELMathEnzymeGetDerivativeFunction()
       : tfel::tests::TestCase("TFEL/Math/Enzyme",
                               "TFELMathEnzymeGetDerivativeFunction") {

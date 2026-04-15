@@ -18,7 +18,7 @@
 
 namespace tfel::math::enzyme {
 
- /*!
+  /*!
    * \brief compute the derivative of a callable with respect to the variables
    * designated by the indices `idx`
    * \tparam m: differentiation mode
@@ -29,29 +29,30 @@ namespace tfel::math::enzyme {
    * \param[in] c: callable
    * \param[in] args: arguments passed to the callable
    */
- template <Mode m,
-           std::size_t... idx,
-           internals::EnzymeCallableConcept CallableType,
-           typename... ArgumentsTypes>
- auto computeDerivative(const CallableType&, ArgumentsTypes&&...) requires(
-     std::is_invocable_v<CallableType, ArgumentsTypes...>);
+  template <Mode m,
+            std::size_t... idx,
+            internals::EnzymeCallableConcept CallableType,
+            typename... ArgumentsTypes>
+  auto computeDerivative(const CallableType&, ArgumentsTypes&&...) requires(
+      std::is_invocable_v<CallableType, ArgumentsTypes...>);
 
   /*!
    * \brief compute the derivative of a free function with respect to the
    * variables designated by the indices `idx`.
    *
-   * \tparam idx: indices of the variables with respect to which the derivatives are computed.
-   * \tparam F: pointer to the free function \tparam ArgumentsTypes: types of the arguments
-   * passed to the free function \param[in] f: free function warpper \param[in]
-   * args: arguments passed to the free function
+   * \tparam idx: indices of the variables with respect to which the derivatives
+   * are computed. \tparam F: pointer to the free function \tparam
+   * ArgumentsTypes: types of the arguments passed to the free function
+   * \param[in] f: free function warpper \param[in] args: arguments passed to
+   * the free function
    */
- template <Mode m,
-           std::size_t... idx,
-           internals::IsFunctionPointerConcept auto F,
-           typename... ArgumentsTypes>
- auto computeDerivative(internals::FunctionWrapper<F>,
-                        ArgumentsTypes&&...)  //
-     requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>);
+  template <Mode m,
+            std::size_t... idx,
+            internals::IsFunctionPointerConcept auto F,
+            typename... ArgumentsTypes>
+  auto computeDerivative(internals::FunctionWrapper<F>,
+                         ArgumentsTypes&&...)  //
+      requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>);
 
 }  // end of namespace tfel::math::enzyme
 

@@ -124,7 +124,8 @@ struct TFELMathEnzyme final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(dc3_dx + std::cos(v)) < eps);
     TFEL_TESTS_ASSERT(std::abs(dc2_dx - a * std::cos(v)) < eps);
     TFEL_TESTS_ASSERT(std::abs(computeDerivative(function<f>, 2) - 12) < eps);
-    TFEL_TESTS_ASSERT(std::abs(computeDerivative<0>(function<f>, 2) - 12) < eps);
+    TFEL_TESTS_ASSERT(std::abs(computeDerivative<0>(function<f>, 2) - 12) <
+                      eps);
     TFEL_TESTS_ASSERT(std::abs(computeDerivative<0>(function<f2>, 2, 1) - 1) <
                       eps);
     TFEL_TESTS_ASSERT(std::abs(computeDerivative<1>(function<f2>, 2, 1) - 2) <

@@ -61,7 +61,8 @@ namespace tfel::math::enzyme::internals {
   }
 
   template <typename... Types>
-  constexpr auto countNumberOfVariableValueAndIncrement() noexcept {
+  constexpr auto countNumberOfVariableValueAndIncrement() noexcept
+      requires(sizeof...(Types) > 0) {
     return ((isVariableValueAndIncrement<Types>() ? 1 : 0) + ...);
   }  // end of countNumberOfVariableValueAndIncrement
 

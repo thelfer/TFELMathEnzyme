@@ -6,11 +6,11 @@
  */
 
 #include <cmath>
+#include <array>
 #include <cstdlib>
 #include <cassert>
 #include <iostream>
 #include <type_traits>
-#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConceptIO.hxx"
@@ -35,6 +35,8 @@ struct TFELMathEnzymeFwdDiff final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
+    this->test3();
+    this->test4();
     return this->result;
   }  // end of execute
  private:
@@ -51,6 +53,10 @@ struct TFELMathEnzymeFwdDiff final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(std::abs(fwddiff([](const double x) { return f(x); },
                                        make_vdv<double>(2, 1)) -
                                12) < eps);
+    const auto c = [](const double x) { return f(x); };
+    TFEL_TESTS_ASSERT(
+        std::abs(fwddiff(c, VariableValueAndIncrement<double>{2, 1}) - 12) <
+        eps);
     TFEL_TESTS_ASSERT(
         std::abs(fwddiff(function<f>, make_vdv<double>(2, 1)) - 12) < eps);
     // functions of two variables
@@ -79,6 +85,31 @@ struct TFELMathEnzymeFwdDiff final : public tfel::tests::TestCase {
     };
     const auto dc3_dx = fwddiff(c3, v);
     TFEL_TESTS_ASSERT(std::abs(dc3_dx + std::cos(v.value)) < eps);
+  }
+  void test3() {
+    using namespace tfel::math::enzyme;
+    constexpr auto eps = double{1e-14};
+    auto v = VariableValueAndIncrement<double>{1, 1};
+    const auto c = [](const double& x) { return std::cos(x); };
+    const auto dc_dx = fwddiff(c, v);
+    TFEL_TESTS_ASSERT(std::abs(dc_dx + std::sin(v.value)) < eps);
+    const auto c2 = [c](const double& x) {
+      auto v2 = VariableValueAndIncrement<double>{x, 1};
+      return fwddiff(c, v2);
+    };
+    const auto d2c_dx2 = fwddiff(c2, v);
+    TFEL_TESTS_ASSERT(std::abs(d2c_dx2 + std::cos(v.value)) < eps);
+  }
+  void test4() {
+    using namespace tfel::math::enzyme;
+    constexpr auto eps = double{1e-14};
+    auto v = VariableValueAndIncrement<double>{1, 0.5};
+    const auto c = [](const double& x) {
+      return std::array{std::cos(x), std::sin(x)};
+    };
+    const auto dc_dx = fwddiff(c, v);
+    TFEL_TESTS_ASSERT(std::abs(dc_dx[0] + 0.5 * std::sin(v.value)) < eps);
+    TFEL_TESTS_ASSERT(std::abs(dc_dx[1] - 0.5 * std::cos(v.value)) < eps);
   }
 };
 

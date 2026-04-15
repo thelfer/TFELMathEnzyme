@@ -38,7 +38,7 @@ namespace tfel::math::enzyme {
     }
   }  // end of computeDerivative
 
-} // end of namespace tfel::math::enzyme
+}  // end of namespace tfel::math::enzyme
 
 namespace tfel::math::enzyme::internals {
 
@@ -57,7 +57,7 @@ namespace tfel::math::enzyme::internals {
         c, std::forward<ArgumentsTypes>(args)...);
   }  // end of computeDerivativeImplementation
 
-} // end of namespace tfel::math::enzyme::internals
+}  // end of namespace tfel::math::enzyme::internals
 
 namespace tfel::math::enzyme {
 
@@ -71,7 +71,7 @@ namespace tfel::math::enzyme {
     return internals::computeDerivativeImplementation<m, idx...>(
         f, internals::getArgumentsList<decltype(F)>(),
         std::forward<ArgumentsTypes>(args)...);
- } // end of computeDerivative
+  }  // end of computeDerivative
 
 }  // end of namespace tfel::math::enzyme
 
