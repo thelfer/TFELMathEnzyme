@@ -50,7 +50,7 @@ namespace tfel::math::enzyme::internals {
     return ::tfel::math::enzyme::getDerivativeFunction<m, idx...>(c);
   }  // end of getDerivativeFunctionImplementation
 
-} // end of namespace tfel::math::enzyme::internals
+}  // end of namespace tfel::math::enzyme::internals
 
 namespace tfel::math::enzyme {
 
@@ -62,8 +62,7 @@ namespace tfel::math::enzyme {
         f, internals::getArgumentsList<decltype(F)>());
   }  // end of getDerivativeFunction
 
-  template <std::size_t... idx,
-            internals::IsFunctionPointerConcept auto F>
+  template <std::size_t... idx, internals::IsFunctionPointerConcept auto F>
   auto getDerivativeFunction(internals::FunctionWrapper<F> f) {
     return getDerivativeFunction<Mode::REVERSE, idx...>(f);
   }  // end of getDerivativeFunction

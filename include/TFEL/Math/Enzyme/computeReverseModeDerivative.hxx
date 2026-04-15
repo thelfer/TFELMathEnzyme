@@ -27,7 +27,7 @@ namespace tfel::math::enzyme {
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(const CallableType&,
-                                  ArgumentsTypes&&...)  //
+                                    ArgumentsTypes&&...)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
                (sizeof...(idx) > 0) &&
@@ -45,7 +45,7 @@ namespace tfel::math::enzyme {
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(const CallableType&,
-                                  ArgumentsTypes&&...)                   //
+                                    ArgumentsTypes&&...)                 //
       requires((std::is_invocable_v<CallableType, ArgumentsTypes...>)&&  //
                (VariableConcept<
                    std::invoke_result_t<CallableType, ArgumentsTypes...>>));
@@ -62,7 +62,7 @@ namespace tfel::math::enzyme {
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(internals::FunctionWrapper<F>,
-                                  ArgumentsTypes&&...)  //
+                                    ArgumentsTypes&&...)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
                (sizeof...(idx) > 0) &&
@@ -80,7 +80,7 @@ namespace tfel::math::enzyme {
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(internals::FunctionWrapper<F>,
-                                  ArgumentsTypes&&...)                  //
+                                    ArgumentsTypes&&...)                //
       requires((std::is_invocable_v<decltype(F), ArgumentsTypes...>)&&  //
                (VariableConcept<
                    std::invoke_result_t<decltype(F), ArgumentsTypes...>>));

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <type_traits>
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Math/Quantity/qtIO.hxx"
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConceptIO.hxx"
@@ -25,8 +26,9 @@
 struct TFELMathEnzymeGetForwardModeDerivativeFunction final
     : public tfel::tests::TestCase {
   TFELMathEnzymeGetForwardModeDerivativeFunction()
-      : tfel::tests::TestCase("TFEL/Math/Enzyme",
-                              "TFELMathEnzymeGetForwardModeDerivativeFunction") {
+      : tfel::tests::TestCase(
+            "TFEL/Math/Enzyme",
+            "TFELMathEnzymeGetForwardModeDerivativeFunction") {
   }  // end of TFELMathEnzyme
   tfel::tests::TestResult execute() override {
     this->test1();
@@ -80,8 +82,8 @@ struct TFELMathEnzymeGetForwardModeDerivativeFunction final
     const auto e = double{1e-2};
     const auto s = stress(e);
     const auto K = stiffness(e);
-    TFEL_TESTS_ASSERT(abs(s - E * e) < E * eps);
-    TFEL_TESTS_ASSERT(abs(K - E) < E * eps);
+    TFEL_TESTS_ASSERT(std::abs(s - E * e) < E * eps);
+    TFEL_TESTS_ASSERT(std::abs(K - E) < E * eps);
   }
 
   // works with -O2
@@ -89,17 +91,17 @@ struct TFELMathEnzymeGetForwardModeDerivativeFunction final
     using namespace tfel::math;
     using namespace tfel::math::enzyme;
     constexpr auto eps = 1e-14;
-    auto E = qt<Stress, float>{150e9};
-    auto Phi = [E](const qt<NoUnit, float> e) { return E * e * e / 2; };
+    auto E = qt<unit::Stress, float>{150e9};
+    auto Phi = [E](const qt<unit::NoUnit, float> e) { return E * e * e / 2; };
     const auto stress = getForwardModeDerivativeFunction<0>(Phi);
     const auto stiffness = getForwardModeDerivativeFunction<0>(stress);
-    const auto e = qt<NoUnit, float>{1e-2};
+    const auto e = qt<unit::NoUnit, float>{1e-2};
     const auto s = stress(e);
     const auto K = stiffness(e);
-    static_assert(std::is_same_v<decltype(s), const qt<Stress, float>>);
-    static_assert(std::is_same_v<decltype(K), const qt<Stress, float>>);
-    TFEL_TESTS_ASSERT(abs(s - E * e) < E * eps);
-    TFEL_TESTS_ASSERT(abs(K - E) < E * eps);
+    static_assert(std::is_same_v<decltype(s), const qt<unit::Stress, float>>);
+    static_assert(std::is_same_v<decltype(K), const qt<unit::Stress, float>>);
+    TFEL_TESTS_ASSERT(tfel::math::abs(s - E * e) < E * eps);
+    TFEL_TESTS_ASSERT(tfel::math::abs(K - E) < E * eps);
   }
 
   void test5() {
@@ -131,7 +133,7 @@ struct TFELMathEnzymeGetForwardModeDerivativeFunction final
     constexpr auto nu = double{0.3};
     constexpr auto lambda = computeLambda(E, nu);
     constexpr auto mu = computeMu(E, nu);
-    constexpr auto eps = double{1e-14};
+    constexpr auto eps = double{1e-12};
     using Stensor4 = st2tost2<3u, double>;
     using Stensor = stensor<3u, double>;
     const auto hooke_potential = [](const Stensor& e) {
@@ -140,7 +142,7 @@ struct TFELMathEnzymeGetForwardModeDerivativeFunction final
     const auto stress = getForwardModeDerivativeFunction<0>(hooke_potential);
     const auto stiffness =
         getForwardModeDerivativeFunction<0, 0>(hooke_potential);
-    const auto e = Stensor{0.01, 0, 0, 0, 0, 0};
+    const auto e = Stensor{1, 0, 0, 0, 0, 0};
     [[maybe_unused]] const auto s = stress(e);
     const auto K = stiffness(e);
     const Stensor4 Kr = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();

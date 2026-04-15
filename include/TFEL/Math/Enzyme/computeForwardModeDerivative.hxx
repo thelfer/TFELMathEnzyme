@@ -20,9 +20,10 @@ namespace tfel::math::enzyme {
 
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto
-  computeForwardModeDerivative(const CallableType&, ArgumentsTypes&&...) requires(
-      std::is_invocable_v<CallableType, ArgumentsTypes...>);
+  auto computeForwardModeDerivative(
+      const CallableType&,
+      ArgumentsTypes&&...) requires(std::is_invocable_v<CallableType,
+                                                        ArgumentsTypes...>);
 
 }  // end of namespace tfel::math::enzyme
 

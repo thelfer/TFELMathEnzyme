@@ -8,9 +8,25 @@
 #ifndef LIB_TFEL_MATH_ENZYME_INTERNALS_FUNCTIONUTILITIES_HXX
 #define LIB_TFEL_MATH_ENZYME_INTERNALS_FUNCTIONUTILITIES_HXX
 
+#include "TFEL/Math/Enzyme/Variable.hxx"
 #include "TFEL/Math/Enzyme/Internals/TypeList.hxx"
+#include "TFEL/Math/Enzyme/Internals/Enzyme.hxx"
 
 namespace tfel::math::enzyme::internals {
+
+  template <typename ExpectedType, typename T>
+  auto convertToEnzymeArgument(T&& v) {
+    if constexpr (isEnzymeType<T>) {
+      static_assert(
+          std::same_as<ExpectedType, typename EnzymeValueType<T>::type>,
+          "invalid Enzyme argument");
+      return v;
+    } else if constexpr (isVariableValueAndIncrement<T>()) {
+      return ::enzyme::Duplicated<ExpectedType>{v.value, v.increment};
+    } else {
+      return ::enzyme::Const<ExpectedType>(v);
+    }
+  }  // end of convertToEnzymeArgument
 
   template <typename CallableType>
   constexpr bool hasCallOperator() noexcept {
@@ -78,7 +94,8 @@ namespace tfel::math::enzyme::internals {
 
   template <typename CallableType>
   auto getArgumentsList() {
-    using List = typename FunctionTraits<CallableType>::type;
+    using List =
+        typename FunctionTraits<std::remove_reference_t<CallableType>>::type;
     return List{};
   }
 
@@ -97,9 +114,9 @@ namespace tfel::math::enzyme::internals {
    * the symbol associated with the function is not seen by Enzyme.
    */
   template <typename CallableType>
-  concept EnzymeCallableConcept = (!isFunction<CallableType>()) &&
-                                  (!isFunctionPointer<CallableType>()) &&
-                                  (hasCallOperator<CallableType>());
+  concept EnzymeCallableConcept =
+      (!isFunction<CallableType>()) && (!isFunctionPointer<CallableType>()) &&
+      (hasCallOperator<std::remove_reference_t<CallableType>>());
 
 }  // end of namespace tfel::math::enzyme::internals
 

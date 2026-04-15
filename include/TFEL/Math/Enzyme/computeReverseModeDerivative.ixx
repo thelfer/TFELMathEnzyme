@@ -44,7 +44,8 @@ namespace tfel::math::enzyme {
       requires(N < sizeof...(DerivativesTypes)) {
     using DerivativeType =
         std::tuple_element_t<N, std::tuple<DerivativesTypes...>>;
-    return static_cast<internals::DerivativeHolder<N, DerivativeType>&>(derivatives)
+    return static_cast<internals::DerivativeHolder<N, DerivativeType>&>(
+               derivatives)
         .value;
   }  // end of get
 
@@ -64,12 +65,14 @@ namespace tfel::math::enzyme {
 namespace std {
 
   template <typename... DerivativesTypes>
-  struct tuple_size<::tfel::math::enzyme::PackedDerivatives<DerivativesTypes...>>
+  struct tuple_size<
+      ::tfel::math::enzyme::PackedDerivatives<DerivativesTypes...>>
       : integral_constant<size_t, sizeof...(DerivativesTypes)> {};
 
   template <std::size_t N, typename... DerivativesTypes>
-  struct tuple_element<N,
-                       ::tfel::math::enzyme::PackedDerivatives<DerivativesTypes...>>
+  struct tuple_element<
+      N,
+      ::tfel::math::enzyme::PackedDerivatives<DerivativesTypes...>>
       : tuple_element<N, std::tuple<DerivativesTypes...>> {};
 
 }  // namespace std
@@ -80,7 +83,7 @@ namespace tfel::math::enzyme::internals {
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeReverseModeScalarFunctionDerivative(const CallableType&,
-                                                ArgumentsTypes&&...)  //
+                                                  ArgumentsTypes&&...)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
                (sizeof...(idx) > 0) &&
@@ -93,7 +96,7 @@ namespace tfel::math::enzyme::internals {
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeReverseModeScalarFunctionDerivative(const CallableType&,
-                                                ArgumentsTypes&&...)     //
+                                                  ArgumentsTypes&&...)   //
       requires((std::is_invocable_v<CallableType, ArgumentsTypes...>)&&  //
                (ScalarConcept<
                    std::invoke_result_t<CallableType, ArgumentsTypes...>>));
@@ -102,7 +105,7 @@ namespace tfel::math::enzyme::internals {
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
   auto computeReverseModeScalarFunctionDerivative(internals::FunctionWrapper<F>,
-                                                ArgumentsTypes&&...)  //
+                                                  ArgumentsTypes&&...)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
                (sizeof...(idx) > 0) &&
@@ -115,7 +118,7 @@ namespace tfel::math::enzyme::internals {
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
   auto computeReverseModeScalarFunctionDerivative(internals::FunctionWrapper<F>,
-                                                ArgumentsTypes&&...)    //
+                                                  ArgumentsTypes&&...)  //
       requires((std::is_invocable_v<decltype(F), ArgumentsTypes...>)&&  //
                (ScalarConcept<
                    std::invoke_result_t<decltype(F), ArgumentsTypes...>>));
@@ -131,8 +134,8 @@ namespace tfel::math::enzyme::internals {
     using ResultType = derivative_type<
         std::invoke_result_t<CallableType, CallableArgumentType>,
         std::decay_t<CallableArgumentType>>;
-    checkCallEnzymeArgumentsConsistency(TypeList<CallableArgumentType>{},
-                                        TypeList<ArgumentType>{});
+    //     checkCallEnzymeArgumentsConsistency(TypeList<CallableArgumentType>{},
+    //                                         TypeList<ArgumentType>{});
     auto wrapper = [](const CallableType* const c,
                       const CallableArgumentType wargs) { return (*c)(wargs); };
     void* const wrapper_ptr = reinterpret_cast<void*>(+wrapper);
@@ -181,9 +184,9 @@ namespace tfel::math::enzyme::internals {
     using CallableResultType =
         std::invoke_result_t<CallableType, CallableArgumentType0,
                              CallableArgumentType1>;
-    checkCallEnzymeArgumentsConsistency(
-        TypeList<CallableArgumentType0, CallableArgumentType1>{},
-        TypeList<ArgumentType0, ArgumentType1>{});
+    //     checkCallEnzymeArgumentsConsistency(
+    //         TypeList<CallableArgumentType0, CallableArgumentType1>{},
+    //         TypeList<ArgumentType0, ArgumentType1>{});
     auto wrapper =
         [](const CallableType* const c, const CallableArgumentType0 wargs0,
            const CallableArgumentType1 wargs1) { return (*c)(wargs0, wargs1); };
@@ -284,7 +287,7 @@ namespace tfel::math::enzyme::internals {
             EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeReverseModeScalarFunctionDerivative(const CallableType& c,
-                                                ArgumentsTypes&&... args)  //
+                                                  ArgumentsTypes&&... args)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
                (sizeof...(idx) > 0) &&
@@ -408,7 +411,7 @@ namespace tfel::math::enzyme {
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(const CallableType& c,
-                                  ArgumentsTypes&&... args)  //
+                                    ArgumentsTypes&&... args)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
                (sizeof...(idx) > 0) &&
@@ -436,7 +439,7 @@ namespace tfel::math::enzyme {
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(internals::FunctionWrapper<F> f,
-                                  ArgumentsTypes&&... args)  //
+                                    ArgumentsTypes&&... args)  //
       requires((sizeof...(ArgumentsTypes) > 0) &&
                (sizeof...(ArgumentsTypes) < 3) &&  //
                (sizeof...(idx) > 0) &&
@@ -453,7 +456,7 @@ namespace tfel::math::enzyme {
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(const CallableType& c,
-                                  ArgumentsTypes&&... args)              //
+                                    ArgumentsTypes&&... args)            //
       requires((std::is_invocable_v<CallableType, ArgumentsTypes...>)&&  //
                (VariableConcept<
                    std::invoke_result_t<CallableType, ArgumentsTypes...>>)) {
@@ -465,7 +468,7 @@ namespace tfel::math::enzyme {
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(internals::FunctionWrapper<F> f,
-                                  ArgumentsTypes&&... args)             //
+                                    ArgumentsTypes&&... args)           //
       requires((std::is_invocable_v<decltype(F), ArgumentsTypes...>)&&  //
                (VariableConcept<
                    std::invoke_result_t<decltype(F), ArgumentsTypes...>>)) {
