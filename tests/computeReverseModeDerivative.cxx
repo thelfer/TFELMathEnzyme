@@ -177,13 +177,14 @@ struct TFELMathEnzymeComputeReversModeDerivative final
     using namespace tfel::math;
     using namespace tfel::math::enzyme;
     using namespace tfel::material;
-    constexpr auto E = qt<unit::Stress, double>{150e9};
-    constexpr auto nu = qt<unit::NoUnit, double>{0.3};
+    using namespace tfel::math::unit;
+    constexpr auto E = qt<Stress, double>{150e9};
+    constexpr auto nu = qt<NoUnit, double>{0.3};
     constexpr auto lambda = computeLambda(E, nu);
     constexpr auto mu = computeMu(E, nu);
     constexpr auto eps = double{1e-14};
-    using Stensor4 = st2tost2<3u, qt<unit::NoUnit, double>>;
-    using Stensor = stensor<3u, qt<unit::NoUnit, double>>;
+    using Stensor4 = st2tost2<3u, qt<NoUnit, double>>;
+    using Stensor = stensor<3u, qt<NoUnit, double>>;
     const auto hooke_potential = [lambda, mu](const Stensor& e) {
       return (lambda / 2) * power<2>(trace(e)) + mu * (e | e);
     };
@@ -193,9 +194,9 @@ struct TFELMathEnzymeComputeReversModeDerivative final
     const auto stiffness = [stress](const Stensor& e) {
       return computeReverseModeDerivative(stress, e);
     };
-    const auto e = Stensor{0.01, 0, 0, 0, 0, 0};
+    const auto e = stensor{0.01, 0, 0, 0, 0, 0};
     const auto K = stiffness(e);
-    const st2tost2<3u, qt<unit::Stress, double>> Kr =
+    const st2tost2<3u, qt<Stress, double>> Kr =
         lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
     TFEL_TESTS_ASSERT(abs(K - Kr) < E * eps);
   }
