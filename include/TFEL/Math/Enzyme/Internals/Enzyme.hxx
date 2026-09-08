@@ -38,9 +38,22 @@ namespace tfel::math::enzyme::internals {
     using type = T;
   };
 
+  /*!
+   * \brief Wrapper for callable objects to be used with Enzyme
+   * \tparam F: the callable type
+   * \tparam L: the type list of arguments
+   */
   template <typename F, typename L>
   inline constexpr auto callable_wrapper = nullptr;
 
+  /*!
+   * \brief Specialization of callable_wrapper for TypeList
+   * \tparam F: the callable type
+   * \tparam Args: the argument types
+   * \param[in] ptr: pointer to the callable object
+   * \param[in] args: the arguments to pass to the callable
+   * \return the result of calling the callable with the arguments
+   */
   template <typename F, typename... Args>
   inline constexpr auto callable_wrapper<F, TypeList<Args...>> =
       [](std::conditional_t<std::is_const_v<F>,  //
@@ -48,9 +61,20 @@ namespace tfel::math::enzyme::internals {
                             void* const> ptr,
          const Args... args) { return (*reinterpret_cast<F*>(ptr))(args...); };
 
+  /*!
+   * \brief Type trait to check if SourceType is convertible to DestinationType
+   * \tparam SourceType: the source type
+   * \tparam DestinationType: the destination type
+   */
   template <typename SourceType, typename DestinationType>
   struct IsConvertible : std::is_convertible<SourceType, DestinationType> {};
 
+  /*!
+   * \brief Check if SourceType is convertible to DestinationType
+   * \tparam SourceType: the source type
+   * \tparam DestinationType: the destination type
+   * \return true if SourceType is convertible to DestinationType
+   */
   template <typename SourceType, typename DestinationType>
   constexpr bool isConvertible() noexcept {
     return IsConvertible<SourceType, DestinationType>::value;
@@ -163,6 +187,9 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Enumeration of differentiation modes
+   */
   enum struct Mode { FORWARD, REVERSE };
 
 }  // end of namespace tfel::math::enzyme

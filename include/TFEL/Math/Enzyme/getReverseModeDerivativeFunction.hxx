@@ -18,6 +18,14 @@
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Get a function that computes the reverse mode derivative of a
+   * callable \tparam Ns: indices specifying which arguments to differentiate
+   * with respect to \tparam CallableType: type of the callable \param[in] c:
+   * callable \return a callable that computes the derivative using reverse mode
+   * \note The returned function can be called with the same arguments as the
+   * original callable
+   */
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
   auto getReverseModeDerivativeFunction(const CallableType&) requires(
       sizeof...(Ns) > 0);

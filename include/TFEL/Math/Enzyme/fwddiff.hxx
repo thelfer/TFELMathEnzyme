@@ -21,11 +21,14 @@
 namespace tfel::math::enzyme {
 
   /*!
-   * \brief compute the increment of a callable given the values of some
-   * variables and theirs increments and the values of the other. \tparam
-   * CallableType: type of the callable \tparam ArgumentsTypes: type of the
-   * arguments passed. \param[in] c: callable \param[in] args: arguments \return
-   * the callable increment
+   * \brief Compute the increment of a callable given the values of some
+   * variables and their increments and the values of the other.
+   * \tparam CallableType: type of the callable
+   * \tparam ArgumentsTypes: types of the arguments passed
+   * \param[in] c: callable
+   * \param[in] args: arguments (must include at least one
+   * VariableValueAndIncrement) \return the callable increment \note This
+   * function uses Enzyme's forward mode automatic differentiation
    */
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
@@ -34,10 +37,15 @@ namespace tfel::math::enzyme {
       0);
 
   /*!
-   * \brief helper function to compute the differential of a regular function.
+   * \brief Helper function to compute the differential of a regular function.
    *
    * Regular functions must be passed as template parameters and not by pointer,
-   * otherwise, the symbol associated with the function is not seen by Enzyme
+   * otherwise, the symbol associated with the function is not seen by Enzyme.
+   * \tparam F: the function pointer
+   * \tparam ArgumentsTypes: types of the arguments passed
+   * \param[in] f: function wrapper created with tfel::math::enzyme::function
+   * \param[in] args: arguments (must include at least one
+   * VariableValueAndIncrement) \return the function increment
    */
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>

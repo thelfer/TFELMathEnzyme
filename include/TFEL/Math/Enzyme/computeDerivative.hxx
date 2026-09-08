@@ -19,15 +19,17 @@
 namespace tfel::math::enzyme {
 
   /*!
-   * \brief compute the derivative of a callable with respect to the variables
-   * designated by the indices `idx`
-   * \tparam m: differentiation mode
+   * \brief Compute the derivative of a callable with respect to the variables
+   * designated by the indices `idx` using the specified mode
+   * \tparam m: differentiation mode (Mode::FORWARD or Mode::REVERSE)
    * \tparam idx: indices of the variables with respect to which the derivatives
-   * are computed.
+   * are computed
    * \tparam CallableType: type of the callable
    * \tparam ArgumentsTypes: types of the arguments passed to the callable
    * \param[in] c: callable
    * \param[in] args: arguments passed to the callable
+   * \return the derivative(s) of the callable result
+   * \note In forward mode, only single-argument callables are supported
    */
   template <Mode m,
             std::size_t... idx,
@@ -37,14 +39,19 @@ namespace tfel::math::enzyme {
       std::is_invocable_v<CallableType, ArgumentsTypes...>);
 
   /*!
-   * \brief compute the derivative of a free function with respect to the
-   * variables designated by the indices `idx`.
-   *
+   * \brief Compute the derivative of a free function with respect to the
+   * variables designated by the indices `idx` using the specified mode
+   * \tparam m: differentiation mode (Mode::FORWARD or Mode::REVERSE)
    * \tparam idx: indices of the variables with respect to which the derivatives
-   * are computed. \tparam F: pointer to the free function \tparam
-   * ArgumentsTypes: types of the arguments passed to the free function
-   * \param[in] f: free function warpper \param[in] args: arguments passed to
-   * the free function
+   * are computed
+   * \tparam F: pointer to the free function
+   * \tparam ArgumentsTypes: types of the arguments passed to the free function
+   * \param[in] f: free function wrapper (created with
+   * tfel::math::enzyme::function)
+   * \param[in] args: arguments passed to the free
+   * function \return the derivative(s) of the function result
+   * \note Regular functions must be passed as template parameters via
+   * FunctionWrapper
    */
   template <Mode m,
             std::size_t... idx,

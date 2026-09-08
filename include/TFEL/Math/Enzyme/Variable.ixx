@@ -10,6 +10,15 @@
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Create a VariableValueAndIncrement from value and increment
+   * \tparam VariableType: the type of the variable
+   * \tparam ValueType: the type of the value
+   * \tparam IncrementType: the type of the increment
+   * \param[in] value: the value of the variable
+   * \param[in] increment: the increment of the variable
+   * \return a VariableValueAndIncrement object
+   */
   template <typename VariableType, typename ValueType, typename IncrementType>
   VariableValueAndIncrement<VariableType>
   make_vdv(ValueType&& value, IncrementType&& increment) requires(
@@ -17,7 +26,7 @@ namespace tfel::math::enzyme {
           std::is_convertible_v<IncrementType, VariableType>)) {
     return {.value = static_cast<VariableType>(value),
             .increment = static_cast<VariableType>(increment)};
-  }  // end of make_dvd
+  }  // end of make_vdv
 
 }  // end of namespace tfel::math::enzyme
 

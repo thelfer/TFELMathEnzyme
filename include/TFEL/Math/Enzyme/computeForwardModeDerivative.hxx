@@ -18,6 +18,15 @@
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Compute the forward mode derivative of a callable
+   * \tparam CallableType: type of the callable
+   * \tparam ArgumentsTypes: types of the arguments passed to the callable
+   * \param[in] c: callable
+   * \param[in] args: arguments passed to the callable
+   * \return the derivative of the callable with respect to its arguments
+   * \note This function only supports callables with a single argument
+   */
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeForwardModeDerivative(

@@ -18,6 +18,16 @@
 
 namespace tfel::math::enzyme::internals {
 
+  /*!
+   * \brief Implementation of computeForwardModeDerivative
+   * \tparam CallableType: the callable type
+   * \tparam CallableArgumentType0: the expected argument type
+   * \tparam ArgumentType0: the actual argument type
+   * \param[in] c: the callable
+   * \param[in] args_list: type list of callable arguments (unused, for SFINAE)
+   * \param[in] arg0: the argument
+   * \return the derivative of the callable with respect to arg0
+   */
   template <EnzymeCallableConcept CallableType,
             typename CallableArgumentType0,
             typename ArgumentType0>
@@ -69,6 +79,15 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Compute the forward mode derivative of a callable
+   * \tparam CallableType: the callable type
+   * \tparam ArgumentsTypes: the argument types
+   * \param[in] c: the callable
+   * \param[in] args: the arguments to pass to the callable
+   * \return the derivative of the callable with respect to its arguments
+   * \note Only callables with a single argument are supported
+   */
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeForwardModeDerivative(

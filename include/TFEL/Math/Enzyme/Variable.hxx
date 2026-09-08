@@ -15,8 +15,11 @@
 namespace tfel::math::enzyme {
 
   /*!
-   * \brief a concept used to imposed constraints on the variable with respect
+   * \brief A concept used to impose constraints on the variable with respect
    * to which a callable object can be differentiated.
+   * \tparam VariableType: the type to check
+   * \note The variable must not be temporary and must be either a scalar or a
+   * math object
    */
   template <typename VariableType>
   concept VariableConcept = (!internals::isTemporary<VariableType>()) &&
@@ -24,18 +27,26 @@ namespace tfel::math::enzyme {
                              (MathObjectConcept<VariableType>));
 
   /*!
-   * \brief a simple structure containing the value of a variable and its
-   * increment
+   * \brief A simple structure containing the value of a variable and its
+   * increment for use with Enzyme's automatic differentiation
+   * \tparam VariableType: the type of the variable
    */
   template <typename VariableType>
   struct VariableValueAndIncrement {
+    /*!\brief The value of the variable */
     VariableType value;
+    /*!\brief The increment of the variable */
     VariableType increment;
   };
 
   /*!
-   * \brief an helper function to build an object of type
-   * `VariableValueAndIncrement`
+   * \brief A helper function to build an object of type
+   * `VariableValueAndIncrement` \tparam VariableType: the type of the variable
+   * \tparam ValueType: the type of the value
+   * \tparam IncrementType: the type of the increment
+   * \param[in] value: the value of the variable
+   * \param[in] increment: the increment of the variable
+   * \return a VariableValueAndIncrement object
    */
   template <typename VariableType, typename ValueType, typename IncrementType>
   VariableValueAndIncrement<VariableType>

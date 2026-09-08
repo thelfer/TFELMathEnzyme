@@ -16,6 +16,16 @@
 
 namespace tfel::math::enzyme::internals {
 
+  /*!
+   * \brief Implementation of getReverseModeDerivativeFunction
+   * \tparam N: current index
+   * \tparam Ns: remaining indices
+   * \tparam CallableType: the callable type
+   * \tparam CallableArgumentsTypes: the argument types
+   * \param[in] c: the callable
+   * \param[in] args_list: type list of callable arguments (unused, for SFINAE)
+   * \return a callable that computes the reverse mode derivative
+   */
   template <std::size_t N,
             std::size_t... Ns,
             internals::EnzymeCallableConcept CallableType,
@@ -38,6 +48,12 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Get a function that computes the reverse mode derivative
+   * \tparam Ns: indices specifying which arguments to differentiate with
+   * respect to \tparam CallableType: the callable type \param[in] c: the
+   * callable \return a callable that computes the reverse mode derivative
+   */
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
   auto getReverseModeDerivativeFunction(const CallableType& c) requires(
       sizeof...(Ns) > 0) {

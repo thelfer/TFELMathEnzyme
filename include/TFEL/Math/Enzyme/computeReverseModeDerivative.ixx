@@ -35,10 +35,21 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief A structure that holds multiple derivative results
+   * \tparam DerivativesTypes: the types of the derivatives to store
+   */
   template <typename... DerivativesTypes>
   struct PackedDerivatives
       : internals::PackedDerivativesImplementation<0, DerivativesTypes...> {};
 
+  /*!
+   * \brief Get a reference to a specific derivative from PackedDerivatives
+   * \tparam N: the index of the derivative to get
+   * \tparam DerivativesTypes: the types of the derivatives stored
+   * \param[out] derivatives: the PackedDerivatives object
+   * \return a reference to the N-th derivative
+   */
   template <std::size_t N, typename... DerivativesTypes>
   auto& get(PackedDerivatives<DerivativesTypes...>& derivatives) noexcept  //
       requires(N < sizeof...(DerivativesTypes)) {
@@ -49,6 +60,13 @@ namespace tfel::math::enzyme {
         .value;
   }  // end of get
 
+  /*!
+   * \brief Get a const reference to a specific derivative from
+   * PackedDerivatives \tparam N: the index of the derivative to get \tparam
+   * DerivativesTypes: the types of the derivatives stored \param[in]
+   * derivatives: the PackedDerivatives object \return a const reference to the
+   * N-th derivative
+   */
   template <std::size_t N, typename... DerivativesTypes>
   const auto& get(
       const PackedDerivatives<DerivativesTypes...>& derivatives) noexcept  //
@@ -407,6 +425,18 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Compute the reverse mode derivative of a callable with respect to
+   * specific variables
+   * \tparam idx: indices of the variables to differentiate with respect to
+   * \tparam CallableType: the callable type
+   * \tparam ArgumentsTypes: the argument types
+   * \param[in] c: the callable
+   * \param[in] args: the arguments to pass to the callable
+   * \return the derivative(s) of the callable result
+   * \note For callables returning non-scalar values, only differentiation with
+   * respect to a single variable is supported
+   */
   template <std::size_t... idx,
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
@@ -435,6 +465,14 @@ namespace tfel::math::enzyme {
     }
   }  // end of computeReverseModeDerivative
 
+  /*!
+   * \brief Compute the reverse mode derivative of a function pointer with
+   * respect to specific variables \tparam idx: indices of the variables to
+   * differentiate with respect to \tparam F: the function pointer \tparam
+   * ArgumentsTypes: the argument types \param[in] f: function wrapper (created
+   * with tfel::math::enzyme::function) \param[in] args: the arguments to pass
+   * to the function \return the derivative(s) of the function result
+   */
   template <std::size_t... idx,
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
@@ -453,6 +491,16 @@ namespace tfel::math::enzyme {
         std::forward<ArgumentsTypes>(args)...);
   }  // end of computeReverseModeDerivative
 
+  /*!
+   * \brief Compute the reverse mode derivative of a callable with respect to
+   * all input variables
+   * \tparam CallableType: the callable type
+   * \tparam ArgumentsTypes: the argument types
+   * \param[in] c: the callable
+   * \param[in] args: the arguments to pass to the callable
+   * \return the derivatives of the callable result with respect to all
+   * variables
+   */
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(const CallableType& c,
@@ -465,6 +513,14 @@ namespace tfel::math::enzyme {
         std::forward<ArgumentsTypes>(args)...);
   }  // end of computeReverseModeDerivative
 
+  /*!
+   * \brief Compute the reverse mode derivative of a function pointer with
+   * respect to all input variables \tparam F: the function pointer \tparam
+   * ArgumentsTypes: the argument types \param[in] f: function wrapper (created
+   * with tfel::math::enzyme::function) \param[in] args: the arguments to pass
+   * to the function \return the derivatives of the function result with respect
+   * to all variables
+   */
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
   auto computeReverseModeDerivative(internals::FunctionWrapper<F> f,
