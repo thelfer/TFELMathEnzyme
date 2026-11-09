@@ -1,0 +1,14 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# \note The 'TFELMath' package is looked up both in the TFEL installation
+# directory and in the 'share/tfel/cmake' sub directory, as the 'TFEL_DIR'
+# variable may be set to either of them
+find_dependency(Enzyme)
+find_dependency(TFELMath HINTS "@TFEL_DIR@" "@TFEL_DIR@/share/tfel/cmake"
+                "$ENV{TFELHOME}/share/tfel/cmake")
+
+include("${CMAKE_CURRENT_LIST_DIR}/TFELMathEnzymeTargets.cmake")
+
+check_required_components(TFELMathEnzyme)
