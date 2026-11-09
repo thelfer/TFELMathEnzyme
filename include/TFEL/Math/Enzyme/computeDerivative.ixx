@@ -1,5 +1,5 @@
 /*!
- * \file   TFEL/Math/Enzyme/computeDerivative.hxx
+ * \file   TFEL/Math/Enzyme/computeDerivative.ixx
  * \brief  This file implements the computeDerivative function
  * \author Thomas Helfer
  * \date   09/08/2024
@@ -34,9 +34,10 @@ namespace tfel::math::enzyme {
             std::size_t... idx,
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto
-  computeDerivative(const CallableType& c, ArgumentsTypes&&... args) requires(
-      std::is_invocable_v<CallableType, ArgumentsTypes...>) {
+  auto computeDerivative(const CallableType& c, ArgumentsTypes&&... args)
+    requires((std::is_invocable_v<CallableType, ArgumentsTypes...>) &&
+             (internals::checkIndices<m, idx...>()))
+  {
     if constexpr (m == Mode::REVERSE) {
       return computeReverseModeDerivative<idx...>(
           c, std::forward<ArgumentsTypes>(args)...);
@@ -74,7 +75,8 @@ namespace tfel::math::enzyme::internals {
       internals::FunctionWrapper<F>,
       const TypeList<FunctionArgumentsTypes...>,
       ArgumentsTypes&&... args)  //
-      requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>) {
+    requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>)
+  {
     auto c = [](const FunctionArgumentsTypes... wargs) { return F(wargs...); };
     return ::tfel::math::enzyme::computeDerivative<m, idx...>(
         c, std::forward<ArgumentsTypes>(args)...);
@@ -100,14 +102,14 @@ namespace tfel::math::enzyme {
             typename... ArgumentsTypes>
   auto computeDerivative(internals::FunctionWrapper<F> f,
                          ArgumentsTypes&&... args)  //
-      requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>) {
+    requires((std::is_invocable_v<decltype(F), ArgumentsTypes...>) &&
+             (internals::checkIndices<m, idx...>()))
+  {
     return internals::computeDerivativeImplementation<m, idx...>(
         f, internals::getArgumentsList<decltype(F)>(),
         std::forward<ArgumentsTypes>(args)...);
   }  // end of computeDerivative
 
 }  // end of namespace tfel::math::enzyme
-
-#include "TFEL/Math/Enzyme/computeDerivative.ixx"
 
 #endif /* LIB_TFEL_MATH_ENZYME_COMPUTEDERIVATIVE_IXX */

@@ -29,8 +29,14 @@ namespace tfel::math::enzyme {
   template <Mode m,
             std::size_t... Ns,
             internals::EnzymeCallableConcept CallableType>
-  auto getDerivativeFunction(const CallableType& c) {
+  auto getDerivativeFunction(const CallableType& c)
+    requires(sizeof...(Ns) > 0)
+  {
     if constexpr (m == Mode::FORWARD) {
+      static_assert(((Ns == 0) && ...),
+                    "forward mode only supports differentiating with respect "
+                    "to the first argument (a repeated index 0 gives higher "
+                    "order derivatives)");
       return getForwardModeDerivativeFunction<Ns...>(c);
     } else {
       return getReverseModeDerivativeFunction<Ns...>(c);
@@ -45,7 +51,9 @@ namespace tfel::math::enzyme {
    * \note This is a convenience function that defaults to reverse mode
    */
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
-  auto getDerivativeFunction(const CallableType& c) {
+  auto getDerivativeFunction(const CallableType& c)
+    requires(sizeof...(Ns) > 0)
+  {
     return getDerivativeFunction<Mode::REVERSE, Ns...>(c);
   }  // end of getDerivativeFunction
 
@@ -90,7 +98,9 @@ namespace tfel::math::enzyme {
   template <Mode m,
             std::size_t... idx,
             internals::IsFunctionPointerConcept auto F>
-  auto getDerivativeFunction(internals::FunctionWrapper<F> f) {
+  auto getDerivativeFunction(internals::FunctionWrapper<F> f)
+    requires(sizeof...(idx) > 0)
+  {
     return internals::getDerivativeFunctionImplementation<m, idx...>(
         f, internals::getArgumentsList<decltype(F)>());
   }  // end of getDerivativeFunction
@@ -105,7 +115,9 @@ namespace tfel::math::enzyme {
    * function that defaults to reverse mode
    */
   template <std::size_t... idx, internals::IsFunctionPointerConcept auto F>
-  auto getDerivativeFunction(internals::FunctionWrapper<F> f) {
+  auto getDerivativeFunction(internals::FunctionWrapper<F> f)
+    requires(sizeof...(idx) > 0)
+  {
     return getDerivativeFunction<Mode::REVERSE, idx...>(f);
   }  // end of getDerivativeFunction
 

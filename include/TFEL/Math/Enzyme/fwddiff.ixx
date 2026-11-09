@@ -70,32 +70,17 @@ namespace tfel::math::enzyme {
    */
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto fwddiff(CallableType&& c, ArgumentsTypes&&... args) requires(
-      internals::countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() >
-      0) {
+  auto fwddiff(CallableType&& c, ArgumentsTypes&&... args)
+    requires(
+        internals::countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() >
+        0)
+  {
     return internals::fwddiffImplementation(
         internals::getArgumentsList<CallableType>(),
         std::forward<CallableType>(c), std::forward<ArgumentsTypes>(args)...);
   }  // end of fwddiff
 
 }  // end of namespace tfel::math::enzyme
-
-// namespace tfel::math::enzyme::internals {
-//
-//   template <typename... CallableArgumentsTypes, typename... ArgumentsTypes>
-//   constexpr void checkCallEnzymeFwdDiffArguments(
-//       const TypeList<CallableArgumentsTypes...>&,
-//       const TypeList<ArgumentsTypes...>&) noexcept
-//       requires(sizeof...(CallableArgumentsTypes) ==
-//       sizeof...(ArgumentsTypes)) {
-//     static_assert(
-//         countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() != 0u,
-//         "one argument of type VariableValueAndIncrement is expected");
-//     static_assert(
-//         countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() == 1u,
-//         "only one argument of type VariableValueAndIncrement is expected");
-//   }  // end of checkCallEnzymeFwdDiffArguments
-//
 
 namespace tfel::math::enzyme::internals {
 
@@ -111,12 +96,10 @@ namespace tfel::math::enzyme::internals {
   template <internals::IsFunctionPointerConcept auto F,
             typename... CallableArgumentsTypes,
             typename... ArgumentsTypes>
-  auto fwddiffImplementation(
-      const TypeList<CallableArgumentsTypes...>&,
-      ArgumentsTypes&&... args) requires((std::
-                                              is_invocable_v<
-                                                  decltype(F),
-                                                  CallableArgumentsTypes...>)) {
+  auto fwddiffImplementation(const TypeList<CallableArgumentsTypes...>&,
+                             ArgumentsTypes&&... args)
+    requires((std::is_invocable_v<decltype(F), CallableArgumentsTypes...>))
+  {
     return ::tfel::math::enzyme::fwddiff(
         [](const CallableArgumentsTypes... wargs) { return F(wargs...); },
         std::forward<ArgumentsTypes>(args)...);
@@ -138,8 +121,10 @@ namespace tfel::math::enzyme {
             typename... ArgumentsTypes>
   auto fwddiff(internals::FunctionWrapper<F>,
                ArgumentsTypes&&... args)  //
-      requires(internals::countNumberOfVariableValueAndIncrement<
-                   ArgumentsTypes...>() > 0) {
+    requires(
+        internals::countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() >
+        0)
+  {
     return internals::fwddiffImplementation<F>(
         internals::getArgumentsList<decltype(F)>(),
         std::forward<ArgumentsTypes>(args)...);

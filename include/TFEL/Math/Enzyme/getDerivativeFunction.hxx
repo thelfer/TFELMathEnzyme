@@ -21,56 +21,69 @@ namespace tfel::math::enzyme {
 
   /*!
    * \brief Get a function that computes the derivative of a callable using the
-   * specified mode \tparam m: differentiation mode (Mode::FORWARD or
-   * Mode::REVERSE) \tparam Ns: indices specifying which arguments to
-   * differentiate with respect to \tparam CallableType: type of the callable
-   * \param[in] c: callable
-   * \return a callable that computes the derivative
+   *   specified mode.
+   * \tparam m: Differentiation mode (Mode::FORWARD or Mode::REVERSE).
+   * \tparam Ns: Indices specifying which arguments to differentiate with
+   * respect to.
+   * \tparam CallableType: Type of the callable.
+   * \param[in] c: The callable to differentiate.
+   * \return A callable that computes the derivative.
    * \note The returned function can be called with the same arguments as the
-   * original callable
+   *   original callable.
    */
   template <Mode m,
             std::size_t... Ns,
             internals::EnzymeCallableConcept CallableType>
-  auto getDerivativeFunction(const CallableType&);
+  auto getDerivativeFunction(const CallableType&)
+    requires(sizeof...(Ns) > 0);
 
   /*!
    * \brief Get a function that computes the derivative of a callable using
-   * reverse mode \tparam Ns: indices specifying which arguments to
-   * differentiate with respect to \tparam CallableType: type of the callable
-   * \param[in] c: callable
-   * \return a callable that computes the derivative using reverse mode
-   * \note This is a convenience function that defaults to reverse mode
+   *   reverse mode.
+   * \tparam Ns: Indices specifying which arguments to differentiate with
+   * respect to.
+   * \tparam CallableType: Type of the callable.
+   * \param[in] c: The callable to differentiate.
+   * \return A callable that computes the derivative using reverse mode.
+   * \note This is a convenience function that defaults to reverse mode.
    */
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
-  auto getDerivativeFunction(const CallableType&);
+  auto getDerivativeFunction(const CallableType&)
+    requires(sizeof...(Ns) > 0);
 
   /*!
    * \brief Get a function that computes the derivative of a free function using
-   * the specified mode \tparam m: differentiation mode (Mode::FORWARD or
-   * Mode::REVERSE) \tparam idx: indices specifying which arguments to
-   * differentiate with respect to \tparam F: pointer to the free function
-   * \param[in] f: free function wrapper (created with
-   * tfel::math::enzyme::function) \return a callable that computes the
-   * derivative \note Regular functions must be passed as template parameters
-   * via FunctionWrapper
+   *   the specified mode.
+   * \tparam m: Differentiation mode (Mode::FORWARD or Mode::REVERSE).
+   * \tparam idx: Indices specifying which arguments to differentiate with
+   * respect to.
+   * \tparam F: Pointer to the free function.
+   * \param[in] f: Free function wrapper (created with
+   *   tfel::math::enzyme::function).
+   * \return A callable that computes the derivative.
+   * \note Regular functions must be passed as template parameters via
+   * FunctionWrapper.
    */
   template <Mode m,
             std::size_t... idx,
             internals::IsFunctionPointerConcept auto F>
-  auto getDerivativeFunction(internals::FunctionWrapper<F>);
+  auto getDerivativeFunction(internals::FunctionWrapper<F>)
+    requires(sizeof...(idx) > 0);
 
   /*!
    * \brief Get a function that computes the derivative of a free function using
-   * reverse mode \tparam idx: indices specifying which arguments to
-   * differentiate with respect to \tparam F: pointer to the free function
-   * \param[in] f: free function wrapper (created with
-   * tfel::math::enzyme::function) \return a callable that computes the
-   * derivative using reverse mode \note This is a convenience function that
-   * defaults to reverse mode
+   *   reverse mode.
+   * \tparam idx: Indices specifying which arguments to differentiate with
+   * respect to.
+   * \tparam F: Pointer to the free function.
+   * \param[in] f: Free function wrapper (created with
+   *   tfel::math::enzyme::function).
+   * \return A callable that computes the derivative using reverse mode.
+   * \note This is a convenience function that defaults to reverse mode.
    */
   template <std::size_t... idx, internals::IsFunctionPointerConcept auto F>
-  auto getDerivativeFunction(internals::FunctionWrapper<F>);
+  auto getDerivativeFunction(internals::FunctionWrapper<F>)
+    requires(sizeof...(idx) > 0);
 
 }  // end of namespace tfel::math::enzyme
 

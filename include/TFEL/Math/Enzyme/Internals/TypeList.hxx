@@ -8,6 +8,8 @@
 #ifndef LIB_TFEL_MATH_ENZYME_INTERNALS_TYPELIST_HXX
 #define LIB_TFEL_MATH_ENZYME_INTERNALS_TYPELIST_HXX
 
+#include <cstddef>
+
 namespace tfel::math::enzyme::internals {
 
   /*!
