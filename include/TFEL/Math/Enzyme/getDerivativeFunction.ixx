@@ -19,19 +19,41 @@
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Get a function that computes the derivative using the specified mode
+   * \tparam m: differentiation mode (Mode::FORWARD or Mode::REVERSE)
+   * \tparam Ns: indices specifying which arguments to differentiate with
+   * respect to \tparam CallableType: the callable type \param[in] c: the
+   * callable \return a callable that computes the derivative
+   */
   template <Mode m,
             std::size_t... Ns,
             internals::EnzymeCallableConcept CallableType>
-  auto getDerivativeFunction(const CallableType& c) {
+  auto getDerivativeFunction(const CallableType& c)
+    requires(sizeof...(Ns) > 0)
+  {
     if constexpr (m == Mode::FORWARD) {
+      static_assert(((Ns == 0) && ...),
+                    "forward mode only supports differentiating with respect "
+                    "to the first argument (a repeated index 0 gives higher "
+                    "order derivatives)");
       return getForwardModeDerivativeFunction<Ns...>(c);
     } else {
       return getReverseModeDerivativeFunction<Ns...>(c);
     }
   }
 
+  /*!
+   * \brief Get a function that computes the derivative using reverse mode
+   * \tparam Ns: indices specifying which arguments to differentiate with
+   * respect to \tparam CallableType: the callable type \param[in] c: the
+   * callable \return a callable that computes the derivative using reverse mode
+   * \note This is a convenience function that defaults to reverse mode
+   */
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
-  auto getDerivativeFunction(const CallableType& c) {
+  auto getDerivativeFunction(const CallableType& c)
+    requires(sizeof...(Ns) > 0)
+  {
     return getDerivativeFunction<Mode::REVERSE, Ns...>(c);
   }  // end of getDerivativeFunction
 
@@ -39,6 +61,16 @@ namespace tfel::math::enzyme {
 
 namespace tfel::math::enzyme::internals {
 
+  /*!
+   * \brief Implementation of getDerivativeFunction for function pointers
+   * \tparam m: differentiation mode
+   * \tparam idx: indices of the variables to differentiate with respect to
+   * \tparam F: the function pointer
+   * \tparam FunctionArgumentsTypes: the argument types
+   * \param[in] f: function wrapper (created with tfel::math::enzyme::function)
+   * \param[in] args_list: type list of function arguments (unused, for SFINAE)
+   * \return a callable that computes the derivative
+   */
   template <Mode m,
             std::size_t... idx,
             internals::IsFunctionPointerConcept auto F,
@@ -54,16 +86,38 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Get a function that computes the derivative of a function pointer
+   * using the specified mode
+   * \tparam m: differentiation mode (Mode::FORWARD or Mode::REVERSE)
+   * \tparam idx: indices specifying which arguments to differentiate with
+   * respect to \tparam F: the function pointer \param[in] f: function wrapper
+   * (created with tfel::math::enzyme::function) \return a callable that
+   * computes the derivative
+   */
   template <Mode m,
             std::size_t... idx,
             internals::IsFunctionPointerConcept auto F>
-  auto getDerivativeFunction(internals::FunctionWrapper<F> f) {
+  auto getDerivativeFunction(internals::FunctionWrapper<F> f)
+    requires(sizeof...(idx) > 0)
+  {
     return internals::getDerivativeFunctionImplementation<m, idx...>(
         f, internals::getArgumentsList<decltype(F)>());
   }  // end of getDerivativeFunction
 
+  /*!
+   * \brief Get a function that computes the derivative of a function pointer
+   * using reverse mode
+   * \tparam idx: indices specifying which arguments to differentiate with
+   * respect to \tparam F: the function pointer \param[in] f: function wrapper
+   * (created with tfel::math::enzyme::function) \return a callable that
+   * computes the derivative using reverse mode \note This is a convenience
+   * function that defaults to reverse mode
+   */
   template <std::size_t... idx, internals::IsFunctionPointerConcept auto F>
-  auto getDerivativeFunction(internals::FunctionWrapper<F> f) {
+  auto getDerivativeFunction(internals::FunctionWrapper<F> f)
+    requires(sizeof...(idx) > 0)
+  {
     return getDerivativeFunction<Mode::REVERSE, idx...>(f);
   }  // end of getDerivativeFunction
 

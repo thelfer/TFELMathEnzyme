@@ -1,0 +1,120 @@
+/*!
+ * \mainpage TFELMathEnzyme Documentation
+ * 
+ * \section intro_sec Introduction
+ * 
+ * <b>TFELMathEnzyme</b> is a C++ library that extends the 
+ * <a href="https://thelfer.github.io/tfel/web/tfel-math.html">TFEL/Math</a>
+ * library with automatic differentiation capabilities powered by the 
+ * <a href="https://enzyme.mit.edu/">Enzyme</a> project. This integration enables
+ * users to compute derivatives of mathematical functions and callables automatically,
+ * leveraging both forward and reverse mode automatic differentiation.
+ * 
+ * \section features_sec Key Features
+ * 
+ * - <b>Automatic Differentiation</b>: Compute derivatives of callables and free 
+ *   functions using Enzyme's forward and reverse mode AD.
+ * - <b>TFEL/Math Integration</b>: Seamlessly works with TFEL's mathematical objects 
+ *   and utilities.
+ * - <b>Header-Only Library</b>: Lightweight and easy to integrate into existing 
+ *   projects.
+ * - <b>Modern C++</b>: Written in C++20 with extensive use of templates, concepts, 
+ *   and type traits.
+ * - <b>Comprehensive Testing</b>: Includes unit tests for all major functionality.
+ * 
+ * \section usecases_sec Use Cases
+ * 
+ * TFELMathEnzyme is particularly useful for:
+ * - Scientific computing applications requiring automatic differentiation
+ * - Optimization algorithms that need gradient computations
+ * - Machine learning applications
+ * - Engineering applications, especially in material modeling and finite element analysis
+ * 
+ * \section getting_started_sec Getting Started
+ * 
+ * \subsection install_subsec Installation
+ * 
+ * See the <a href="https://github.com/thelfer/TFELMathEnzyme/blob/master/INSTALL.md">INSTALL.md</a>
+ * file for detailed installation instructions.
+ * 
+ * \subsection basic_example_subsec Basic Example
+ * 
+ * The following example demonstrates how to compute the derivative of a simple function:
+ * 
+ * \code
+ * #include <TFEL/Math/Enzyme/computeDerivative.hxx>
+ * #include <TFEL/Math/Enzyme/Variable.hxx>
+ * 
+ * using namespace tfel::math::enzyme;
+ * 
+ * // Define a simple function
+ * auto square = [](double x) { return x * x; };
+ * 
+ * // Compute its derivative at x = 2.0
+ * auto derivative = computeDerivative<Mode::FORWARD, 0>(square, 2.0);
+ * // derivative now contains 4.0 (2 * 2.0)
+ * \endcode
+ * 
+ * \section architecture_sec Architecture Overview
+ * 
+ * \subsection core_components_subsec Core Components
+ * 
+ * The library is organized into several key components:
+ * 
+ * <b>Main Functionality:</b>
+ * - <b>computeDerivative</b>: Computes derivatives of callables or free functions 
+ *   with respect to specified variables. Supports both forward and reverse mode 
+ *   differentiation.
+ * - <b>fwddiff</b>: Computes the increment of a callable given variable values and 
+ *   their increments using Enzyme's forward mode AD.
+ * - <b>Variable Utilities</b>: Provides utilities for handling variables in 
+ *   differentiation, including the VariableConcept, VariableValueAndIncrement 
+ *   structure, and helper functions.
+ * - <b>Derivative Functions</b>: Higher-level abstractions for derivative computation 
+ *   including getDerivativeFunction, getForwardModeDerivativeFunction, and 
+ *   getReverseModeDerivativeFunction.
+ * 
+ * <b>Internal Utilities:</b>
+ * - Type traits for working with Enzyme and TFEL types
+ * - Function utilities for handling function pointers and callables
+ * - Low-level integration with Enzyme's AD capabilities
+ * 
+ * \subsection namespace_org_subsec Namespace Organization
+ * 
+ * All functionality is provided within the <b>tfel::math::enzyme</b> namespace.
+ * Internal utilities are in the <b>tfel::math::enzyme::internals</b> namespace.
+ * 
+ * \section dependencies_sec Dependencies
+ * 
+ * - <b>C++20 Compiler</b>: Required for modern C++ features
+ * - <b>LLVM 18+</b>: Enzyme requires LLVM 18 or later
+ * - <b>Enzyme</b>: Automatic differentiation library
+ * - <b>TFEL/Math</b>: Mathematical library from the TFEL project
+ * 
+ * \section project_structure_sec Project Structure
+ * 
+ * The project is organized as follows:
+ * 
+ * - <b>include/TFEL/Math/Enzyme/</b>: Public headers containing the main library functionality
+ * - <b>src/</b>: Library definition (INTERFACE target)
+ * - <b>tests/</b>: Unit tests for all major functionality
+ * 
+ * \section additional_info_sec Additional Information
+ * 
+ * - <a href="https://github.com/thelfer/TFELMathEnzyme">GitHub Repository</a>
+ * - <a href="https://github.com/thelfer/TFELMathEnzyme/blob/master/README.md">README.md</a>
+ * - <a href="https://github.com/thelfer/TFELMathEnzyme/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a>
+ * - <a href="https://enzyme.mit.edu/">Enzyme Project</a>
+ * - <a href="https://thelfer.github.io/tfel/web/tfel-math.html">TFEL/Math Documentation</a>
+ * 
+ * \section license_sec License
+ * 
+ * This project is publicly released under either the GNU GPL License or the 
+ * CECILL-A License. A copy of these licenses is delivered with the sources of TFEL.
+ * CEA or EDF may also distribute this project under specific licensing conditions.
+ * 
+ * \section contact_sec Contact
+ * 
+ * For questions or support, please contact: 
+ * <a href="mailto:tfel-contact@cea.fr">tfel-contact@cea.fr</a>
+ */

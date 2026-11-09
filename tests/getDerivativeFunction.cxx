@@ -19,6 +19,14 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
+static double f_cube(const double x) {
+  return tfel::math::power<3>(x);
+}  // end of f_cube
+
+static double f_x_plus_y2(const double x, const double y) {
+  return x + tfel::math::power<2>(y);
+}  // end of f_x_plus_y2
+
 struct TFELMathEnzymeGetDerivativeFunction final
     : public tfel::tests::TestCase {
   TFELMathEnzymeGetDerivativeFunction()
@@ -30,6 +38,9 @@ struct TFELMathEnzymeGetDerivativeFunction final
     this->test1<tfel::math::enzyme::Mode::FORWARD>();
     this->test2<tfel::math::enzyme::Mode::REVERSE>();
     this->test2<tfel::math::enzyme::Mode::FORWARD>();
+    this->test3<tfel::math::enzyme::Mode::REVERSE>();
+    this->test3<tfel::math::enzyme::Mode::FORWARD>();
+    this->test4();
     return this->result;
   }  // end of execute
  private:
@@ -69,6 +80,27 @@ struct TFELMathEnzymeGetDerivativeFunction final
     const auto K = stiffness(e);
     const auto K_ref = eval(2 * mu * Stensor4::Id() + lambda * Stensor4::IxI());
     TFEL_TESTS_ASSERT(abs(K - K_ref) < eps * E);
+  }
+  // getter for a free function
+  template <tfel::math::enzyme::Mode m>
+  void test3() {
+    using namespace tfel::math::enzyme;
+    constexpr auto eps = double{1e-14};
+    // first derivative
+    const auto df = getDerivativeFunction<m, 0>(function<f_cube>);
+    TFEL_TESTS_ASSERT(std::abs(df(2.) - 12.) < eps);
+    // index 0 can be repeated to get higher order derivatives
+    const auto d2f = getDerivativeFunction<m, 0, 0>(function<f_cube>);
+    TFEL_TESTS_ASSERT(std::abs(d2f(1.) - 6.) < eps);
+  }
+  // getter for a free function of two variables, with respect to the second one
+  void test4() {
+    using namespace tfel::math::enzyme;
+    constexpr auto eps = double{1e-14};
+    const auto df_dy =
+        getDerivativeFunction<tfel::math::enzyme::Mode::REVERSE, 1>(
+            function<f_x_plus_y2>);
+    TFEL_TESTS_ASSERT(std::abs(df_dy(2., 3.) - 6.) < eps);
   }
 };
 

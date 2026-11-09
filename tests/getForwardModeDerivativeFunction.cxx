@@ -23,6 +23,10 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
+static double f_cube(const double x) {
+  return tfel::math::power<3>(x);
+}  // end of f_cube
+
 struct TFELMathEnzymeGetForwardModeDerivativeFunction final
     : public tfel::tests::TestCase {
   TFELMathEnzymeGetForwardModeDerivativeFunction()
@@ -37,6 +41,7 @@ struct TFELMathEnzymeGetForwardModeDerivativeFunction final
     this->test4();
     this->test5();
     this->test6();
+    this->test7();
     return this->result;
   }  // end of execute
  private:
@@ -147,6 +152,18 @@ struct TFELMathEnzymeGetForwardModeDerivativeFunction final
     const auto K = stiffness(e);
     const Stensor4 Kr = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
     TFEL_TESTS_ASSERT(abs(K - Kr) < E * eps);
+  }
+
+  // getter for a free function
+  void test7() {
+    using namespace tfel::math::enzyme;
+    constexpr auto eps = double{1e-14};
+    // first derivative
+    const auto df = getForwardModeDerivativeFunction<0>(function<f_cube>);
+    TFEL_TESTS_ASSERT(std::abs(df(2.) - 12.) < eps);
+    // index 0 can be repeated to get higher order derivatives
+    const auto d2f = getForwardModeDerivativeFunction<0, 0>(function<f_cube>);
+    TFEL_TESTS_ASSERT(std::abs(d2f(1.) - 6.) < eps);
   }
 };
 

@@ -16,6 +16,16 @@
 
 namespace tfel::math::enzyme::internals {
 
+  /*!
+   * \brief Implementation of getReverseModeDerivativeFunction
+   * \tparam N: current index
+   * \tparam Ns: remaining indices
+   * \tparam CallableType: the callable type
+   * \tparam CallableArgumentsTypes: the argument types
+   * \param[in] c: the callable
+   * \param[in] args_list: type list of callable arguments (unused, for SFINAE)
+   * \return a callable that computes the reverse mode derivative
+   */
   template <std::size_t N,
             std::size_t... Ns,
             internals::EnzymeCallableConcept CallableType,
@@ -38,11 +48,62 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Get a function that computes the reverse mode derivative
+   * \tparam Ns: indices specifying which arguments to differentiate with
+   * respect to \tparam CallableType: the callable type \param[in] c: the
+   * callable \return a callable that computes the reverse mode derivative
+   */
   template <std::size_t... Ns, internals::EnzymeCallableConcept CallableType>
-  auto getReverseModeDerivativeFunction(const CallableType& c) requires(
-      sizeof...(Ns) > 0) {
+  auto getReverseModeDerivativeFunction(const CallableType& c)
+    requires(sizeof...(Ns) > 0)
+  {
     return internals::getReverseModeDerivativeFunctionImplementation<Ns...>(
         c, internals::getArgumentsList<CallableType>());
+  }  // end of getReverseModeDerivativeFunction
+
+}  // end of namespace tfel::math::enzyme
+
+namespace tfel::math::enzyme::internals {
+
+  /*!
+   * \brief Implementation of getReverseModeDerivativeFunction for function
+   * pointers
+   * \tparam Ns: indices specifying which arguments to differentiate with
+   * respect to
+   * \tparam F: the function pointer
+   * \tparam CallableArgumentsTypes: the argument types of the function
+   * \param[in] args_list: type list of function arguments
+   * \return a callable that computes the reverse mode derivative
+   */
+  template <std::size_t... Ns,
+            internals::IsFunctionPointerConcept auto F,
+            typename... CallableArgumentsTypes>
+  auto getReverseModeDerivativeFunctionImplementation(
+      internals::FunctionWrapper<F>,
+      const TypeList<CallableArgumentsTypes...>) {
+    auto c = [](const CallableArgumentsTypes... wargs) { return F(wargs...); };
+    return ::tfel::math::enzyme::getReverseModeDerivativeFunction<Ns...>(c);
+  }  // end of getReverseModeDerivativeFunctionImplementation
+
+}  // end of namespace tfel::math::enzyme::internals
+
+namespace tfel::math::enzyme {
+
+  /*!
+   * \brief Get a function that computes the reverse mode derivative of a
+   * function pointer
+   * \tparam Ns: indices specifying which arguments to differentiate with
+   * respect to
+   * \tparam F: the function pointer
+   * \return a callable that computes the reverse mode derivative
+   */
+  template <std::size_t... Ns, internals::IsFunctionPointerConcept auto F>
+  auto getReverseModeDerivativeFunction(internals::FunctionWrapper<F> f)
+    requires(sizeof...(Ns) > 0)
+  {
+    return internals::getReverseModeDerivativeFunctionImplementation<Ns...>(
+        f, internals::getArgumentsList<decltype(F)>());
   }  // end of getReverseModeDerivativeFunction
 
 }  // end of namespace tfel::math::enzyme
