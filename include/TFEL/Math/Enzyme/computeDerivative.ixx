@@ -1,5 +1,5 @@
 /*!
- * \file   TFEL/Math/Enzyme/computeDerivative.hxx
+ * \file   TFEL/Math/Enzyme/computeDerivative.ixx
  * \brief  This file implements the computeDerivative function
  * \author Thomas Helfer
  * \date   09/08/2024
@@ -19,13 +19,25 @@
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Compute the derivative of a callable using the specified mode
+   * \tparam m: differentiation mode (Mode::FORWARD or Mode::REVERSE)
+   * \tparam idx: indices of the variables to differentiate with respect to
+   * \tparam CallableType: the callable type
+   * \tparam ArgumentsTypes: the argument types
+   * \param[in] c: the callable
+   * \param[in] args: the arguments to pass to the callable
+   * \return the derivative(s) of the callable result
+   * \note In forward mode, only callables with a single argument are supported
+   */
   template <Mode m,
             std::size_t... idx,
             internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto
-  computeDerivative(const CallableType& c, ArgumentsTypes&&... args) requires(
-      std::is_invocable_v<CallableType, ArgumentsTypes...>) {
+  auto computeDerivative(const CallableType& c, ArgumentsTypes&&... args)
+    requires((std::is_invocable_v<CallableType, ArgumentsTypes...>) &&
+             (internals::checkIndices<m, idx...>()))
+  {
     if constexpr (m == Mode::REVERSE) {
       return computeReverseModeDerivative<idx...>(
           c, std::forward<ArgumentsTypes>(args)...);
@@ -42,6 +54,18 @@ namespace tfel::math::enzyme {
 
 namespace tfel::math::enzyme::internals {
 
+  /*!
+   * \brief Implementation of computeDerivative for function pointers
+   * \tparam m: differentiation mode
+   * \tparam idx: indices of the variables to differentiate with respect to
+   * \tparam F: the function pointer
+   * \tparam FunctionArgumentsTypes: the expected argument types of the function
+   * \tparam ArgumentsTypes: the actual argument types passed
+   * \param[in] f: function wrapper (created with tfel::math::enzyme::function)
+   * \param[in] args_list: type list of function arguments (unused, for SFINAE)
+   * \param[in] args: the arguments to pass to the function
+   * \return the derivative(s) of the function result
+   */
   template <Mode m,
             std::size_t... idx,
             internals::IsFunctionPointerConcept auto F,
@@ -51,7 +75,8 @@ namespace tfel::math::enzyme::internals {
       internals::FunctionWrapper<F>,
       const TypeList<FunctionArgumentsTypes...>,
       ArgumentsTypes&&... args)  //
-      requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>) {
+    requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>)
+  {
     auto c = [](const FunctionArgumentsTypes... wargs) { return F(wargs...); };
     return ::tfel::math::enzyme::computeDerivative<m, idx...>(
         c, std::forward<ArgumentsTypes>(args)...);
@@ -61,20 +86,30 @@ namespace tfel::math::enzyme::internals {
 
 namespace tfel::math::enzyme {
 
+  /*!
+   * \brief Compute the derivative of a function pointer using the specified
+   * mode \tparam m: differentiation mode (Mode::FORWARD or Mode::REVERSE)
+   * \tparam idx: indices of the variables to differentiate with respect to
+   * \tparam F: the function pointer
+   * \tparam ArgumentsTypes: the argument types
+   * \param[in] f: function wrapper (created with tfel::math::enzyme::function)
+   * \param[in] args: the arguments to pass to the function
+   * \return the derivative(s) of the function result
+   */
   template <Mode m,
             std::size_t... idx,
             internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
   auto computeDerivative(internals::FunctionWrapper<F> f,
                          ArgumentsTypes&&... args)  //
-      requires(std::is_invocable_v<decltype(F), ArgumentsTypes...>) {
+    requires((std::is_invocable_v<decltype(F), ArgumentsTypes...>) &&
+             (internals::checkIndices<m, idx...>()))
+  {
     return internals::computeDerivativeImplementation<m, idx...>(
         f, internals::getArgumentsList<decltype(F)>(),
         std::forward<ArgumentsTypes>(args)...);
   }  // end of computeDerivative
 
 }  // end of namespace tfel::math::enzyme
-
-#include "TFEL/Math/Enzyme/computeDerivative.ixx"
 
 #endif /* LIB_TFEL_MATH_ENZYME_COMPUTEDERIVATIVE_IXX */

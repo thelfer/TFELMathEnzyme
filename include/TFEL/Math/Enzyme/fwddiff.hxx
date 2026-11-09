@@ -21,29 +21,41 @@
 namespace tfel::math::enzyme {
 
   /*!
-   * \brief compute the increment of a callable given the values of some
-   * variables and theirs increments and the values of the other. \tparam
-   * CallableType: type of the callable \tparam ArgumentsTypes: type of the
-   * arguments passed. \param[in] c: callable \param[in] args: arguments \return
-   * the callable increment
+   * \brief Compute the increment of a callable given the values of some
+   *   variables and their increments and the values of the other.
+   * \tparam CallableType: Type of the callable.
+   * \tparam ArgumentsTypes: Types of the arguments passed.
+   * \param[in] c: The callable to differentiate.
+   * \param[in] args: Arguments (must include at least one
+   *   VariableValueAndIncrement).
+   * \return The callable increment.
+   * \note This function uses Enzyme's forward mode automatic differentiation.
    */
   template <internals::EnzymeCallableConcept CallableType,
             typename... ArgumentsTypes>
-  auto fwddiff(CallableType&&, ArgumentsTypes&&...) requires(
-      internals::countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() >
-      0);
+  auto fwddiff(CallableType&&, ArgumentsTypes&&...)
+    requires(
+        internals::countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() >
+        0);
 
   /*!
-   * \brief helper function to compute the differential of a regular function.
+   * \brief Helper function to compute the differential of a regular function.
    *
    * Regular functions must be passed as template parameters and not by pointer,
-   * otherwise, the symbol associated with the function is not seen by Enzyme
+   * otherwise, the symbol associated with the function is not seen by Enzyme.
+   * \tparam F: The function pointer.
+   * \tparam ArgumentsTypes: Types of the arguments passed.
+   * \param[in] f: Function wrapper created with tfel::math::enzyme::function.
+   * \param[in] args: Arguments (must include at least one
+   *   VariableValueAndIncrement).
+   * \return The function increment.
    */
   template <internals::IsFunctionPointerConcept auto F,
             typename... ArgumentsTypes>
-  auto fwddiff(internals::FunctionWrapper<F>, ArgumentsTypes&&...) requires(
-      internals::countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() >
-      0);
+  auto fwddiff(internals::FunctionWrapper<F>, ArgumentsTypes&&...)
+    requires(
+        internals::countNumberOfVariableValueAndIncrement<ArgumentsTypes...>() >
+        0);
 
 }  // end of namespace tfel::math::enzyme
 
